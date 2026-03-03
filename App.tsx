@@ -40,6 +40,7 @@ import {
   collection,
   onSnapshot,
   addDoc,
+  updateDoc,
   serverTimestamp,
   query,
   where,
@@ -310,6 +311,7 @@ function MainScreen({
   const [showTutorial, setShowTutorial] = useState(false);
   const [tutorialStep, setTutorialStep] = useState(0);
   const [rallies, setRallies] = useState<any[]>([]);
+  const [guestMatchId, setGuestMatchId] = useState<string | null>(null);
 
   const tutorialDummyResult = {
     duration: 1540,
@@ -328,6 +330,36 @@ function MainScreen({
         { scorer: 'B', scoreA: 20, scoreB: 22, setIndex: 3, timestamp: Date.now(), duration: 10 },
     ] as PointLog[]
   };
+
+  // 상대방 경기 초대 감지 리스너 (게스트 모드)
+  useEffect(() => {
+    if (!user) return;
+    const matchesRef = collection(db, 'matches');
+    const q = query(matchesRef, where('guestId', '==', user.uid), where('status', '==', 'pending'));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          const matchData = change.doc.data();
+          Alert.alert(
+            "실시간 경기 초대 🏸",
+            `${matchData.hostName}님이 경기 점수판에 초대했습니다.\n수락하시겠습니까?`,
+            [
+              { text: "거절", style: "cancel", onPress: () => {
+                  updateDoc(doc(db, 'matches', change.doc.id), { status: 'declined' });
+              }},
+              { text: "수락", onPress: () => {
+                  updateDoc(doc(db, 'matches', change.doc.id), { status: 'accepted' });
+                  setGuestMatchId(change.doc.id);
+                  setCurrentScreen('score'); // 경기 모드로 화면 전환
+              }}
+            ]
+          );
+        }
+      });
+    });
+    return () => unsubscribe();
+  }, [user]);
 
   useEffect(() => {
     if (isFirstLogin) {
@@ -426,7 +458,7 @@ function MainScreen({
   const renderScreen = () => {
     switch (currentScreen) {
       case 'home':
-        return <ScoreTracker onComplete={goToSummary} onCancel={goToMatch} />;
+        return <ScoreTracker onComplete={goToSummary} onCancel={goToMatch} guestMatchId={guestMatchId} onClearGuestMatch={() => setGuestMatchId(null)} />;
       case 'match':
         return (
           <Home
@@ -438,7 +470,7 @@ function MainScreen({
           />
         );
       case 'score':
-        return <ScoreTracker onComplete={goToSummary} onCancel={goToMatch} />;
+        return <ScoreTracker onComplete={goToSummary} onCancel={goToMatch} guestMatchId={guestMatchId} onClearGuestMatch={() => setGuestMatchId(null)} />;
       case 'summary':
         return (
           <GameSummary

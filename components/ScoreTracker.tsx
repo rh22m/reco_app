@@ -16,13 +16,14 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Alert
 } from 'react-native';
 import { RotateCcw, Play, Pause, ArrowLeft, XCircle, AlertTriangle, Timer, TrendingUp, Activity, Flame, Trophy, Zap, ShieldAlert, Lightbulb, Watch, Users, X } from 'lucide-react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { sendMessage, watchEvents } from 'react-native-wear-connectivity';
 
-import { getFirestore, doc, getDoc, collection, onSnapshot } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, onSnapshot, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 export interface PointLog {
@@ -46,6 +47,8 @@ interface ScoreTrackerProps {
     team2Name: string;
   }) => void;
   onCancel: () => void;
+  guestMatchId?: string | null;
+  onClearGuestMatch?: () => void;
 }
 
 const TIPS = [
@@ -106,10 +109,16 @@ const loadingStyles = StyleSheet.create({
   tipDesc: { color: '#94A3B8', fontSize: 14, textAlign: 'center', lineHeight: 22 },
 });
 
-export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
+export function ScoreTracker({ onComplete, onCancel, guestMatchId, onClearGuestMatch }: ScoreTrackerProps) {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [friendsList, setFriendsList] = useState<any[]>([]);
   const [isFriendModalVisible, setIsFriendModalVisible] = useState(false);
+
+  // 실시간 동기화 관련 상태
+  const [opponentUid, setOpponentUid] = useState<string | null>(null);
+  const [isWaitingAcceptance, setIsWaitingAcceptance] = useState(false);
+  const [isHost, setIsHost] = useState(true);
+  const [matchId, setMatchId] = useState<string | null>(null);
 
   const [isSetupMode, setIsSetupMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -191,6 +200,49 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
     return () => unsubscribe();
   }, [currentUser]);
 
+  // ✅ [게스트 관전 모드] 상대방이 점수 올릴 때마다 화면에 미러링
+  useEffect(() => {
+    if (guestMatchId) {
+       setIsSetupMode(false);
+       setIsHost(false);
+       setMatchId(guestMatchId);
+       const db = getFirestore();
+       const unsub = onSnapshot(doc(db, 'matches', guestMatchId), (snap) => {
+           const data = snap.data();
+           if (data) {
+               // 미러링: 게스트 폰에서는 자기가 team2(아래쪽), 방장이 team1(위쪽)
+               setTeam1Name(data.hostName);
+               setTeam2Name(data.guestName);
+               setTeam1Score(data.hostScore);
+               setTeam2Score(data.guestScore);
+               setTeam1SetWins(data.hostSets);
+               setTeam2SetWins(data.guestSets);
+               setElapsedTime(data.timer);
+
+               if (data.status === 'finished') {
+                   unsub();
+                   if (onClearGuestMatch) onClearGuestMatch();
+                   onComplete({
+                       duration: data.timer,
+                       team1Wins: data.hostSets, // 방장 득점 세트
+                       team2Wins: data.guestSets, // 게스트 득점 세트
+                       isForced: false,
+                       pointLogs: [], // 관전자 모드는 로그 생략
+                       team1Name: data.hostName,
+                       team2Name: data.guestName
+                   });
+               } else if (data.status === 'canceled') {
+                   unsub();
+                   if (onClearGuestMatch) onClearGuestMatch();
+                   Alert.alert("경기 중단", "상대방이 경기를 중단했습니다.");
+                   onCancel();
+               }
+           }
+       });
+       return () => unsub();
+    }
+  }, [guestMatchId]);
+
   const handlersRef = useRef({
     handleScore: (team: 'team1' | 'team2') => {},
     handleUndo: () => {},
@@ -200,9 +252,9 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
 
   useEffect(() => {
     handlersRef.current = {
-      handleScore: (team) => handleScore(team),
-      handleUndo: () => handleUndo(),
-      togglePause: () => setIsTimerRunning(prev => !prev),
+      handleScore: (team) => { if (isHost) handleScore(team) },
+      handleUndo: () => { if (isHost) handleUndo() },
+      togglePause: () => { if (isHost) setIsTimerRunning(prev => !prev) },
       setConnected: () => setIsWatchConnected(true)
     };
   });
@@ -233,24 +285,24 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isLoading) interval = setInterval(() => safeSendMessage({ type: 'PING' }), 1000);
+    if (isLoading && isHost) interval = setInterval(() => safeSendMessage({ type: 'PING' }), 1000);
     return () => clearInterval(interval);
-  }, [isLoading]);
+  }, [isLoading, isHost]);
 
   useEffect(() => {
-    if (!isSetupMode && !isLoading) safeSendMessage({ type: 'SYNC_TIMER', timer: formatTime(elapsedTime) });
-  }, [elapsedTime, isSetupMode, isLoading]);
+    if (!isSetupMode && !isLoading && isHost) safeSendMessage({ type: 'SYNC_TIMER', timer: formatTime(elapsedTime) });
+  }, [elapsedTime, isSetupMode, isLoading, isHost]);
 
   useEffect(() => {
-    if (!isSetupMode && !isLoading) safeSendMessage({ type: 'SYNC_STATE', myScore: team2Score, opponentScore: team1Score, isPause: !isTimerRunning });
-  }, [team1Score, team2Score, isTimerRunning, isSetupMode, isLoading]);
+    if (!isSetupMode && !isLoading && isHost) safeSendMessage({ type: 'SYNC_STATE', myScore: team2Score, opponentScore: team1Score, isPause: !isTimerRunning });
+  }, [team1Score, team2Score, isTimerRunning, isSetupMode, isLoading, isHost]);
 
   useEffect(() => {
-    return () => { if (!isSetupMode) safeSendMessage({ type: 'GAME_END' }); };
-  }, [isSetupMode]);
+    return () => { if (!isSetupMode && isHost) safeSendMessage({ type: 'GAME_END' }); };
+  }, [isSetupMode, isHost]);
 
   useEffect(() => {
-    if (!isSetupMode && !isLoading && isWatchConnected) {
+    if (!isSetupMode && !isLoading && isWatchConnected && isHost) {
         setTimeout(() => {
             setShowWatchGuide(true);
             Animated.timing(guideOpacity, { toValue: 1, duration: 500, useNativeDriver: true }).start();
@@ -259,17 +311,17 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
             }, 5000);
         }, 1000);
     }
-  }, [isSetupMode, isLoading, isWatchConnected]);
+  }, [isSetupMode, isLoading, isWatchConnected, isHost]);
 
   useEffect(() => {
-    if (isTimerRunning) {
+    if (isTimerRunning && isHost) {
       if (lastPointTimeRef.current === 0) lastPointTimeRef.current = Date.now();
       timerRef.current = setInterval(() => setElapsedTime(prev => prev + 1), 1000);
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, isHost]);
 
   const handleStartButtonPress = async () => {
     if (!team1Name.trim()) setTeam1Name("TEAM 1");
@@ -291,7 +343,47 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
     }
 
     setIsWatchConnected(false);
-    setIsLoading(true);
+
+    if (opponentUid) {
+      setIsWaitingAcceptance(true);
+      try {
+        const db = getFirestore();
+        const matchRef = await addDoc(collection(db, 'matches'), {
+            hostId: currentUser.uid,
+            hostName: team2Name,
+            guestId: opponentUid,
+            guestName: team1Name,
+            status: 'pending',
+            hostScore: 0,
+            guestScore: 0,
+            hostSets: 0,
+            guestSets: 0,
+            timer: 0,
+            createdAt: serverTimestamp()
+        });
+
+        // 상대방 수락 대기
+        const unsub = onSnapshot(matchRef, (docSnap) => {
+            const data = docSnap.data();
+            if (data?.status === 'accepted') {
+                unsub();
+                setMatchId(matchRef.id);
+                setIsHost(true);
+                setIsWaitingAcceptance(false);
+                setIsLoading(true);
+            } else if (data?.status === 'declined') {
+                unsub();
+                setIsWaitingAcceptance(false);
+                Alert.alert("초대 거절됨", "상대방이 초대를 거절했습니다.");
+            }
+        });
+      } catch (error) {
+        setIsWaitingAcceptance(false);
+        Alert.alert("오류", "초대 전송 중 문제가 발생했습니다.");
+      }
+    } else {
+      setIsLoading(true);
+    }
   };
 
   const handleLoadingFinish = () => {
@@ -302,7 +394,7 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
   };
 
   const handleScore = (team: 'team1' | 'team2') => {
-    if (!isTimerRunning) return;
+    if (!isTimerRunning || !isHost) return;
 
     setScoreHistory(prev => [...prev, { t1Score: team1Score, t2Score: team2Score, t1Wins: team1SetWins, t2Wins: team2SetWins }]);
 
@@ -336,6 +428,22 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
     setTeam1Score(newT1); setTeam2Score(newT2);
     setTeam1SetWins(newSet1); setTeam2SetWins(newSet2);
 
+    // 상대방(게스트) 화면 동기화를 위한 DB 업데이트
+    if (matchId) {
+        const db = getFirestore();
+        updateDoc(doc(db, 'matches', matchId), {
+            hostScore: newT2,
+            guestScore: newT1,
+            hostSets: newSet2,
+            guestSets: newSet1,
+            timer: elapsedTime
+        });
+
+        if (newSet1 === 2 || newSet2 === 2) {
+             updateDoc(doc(db, 'matches', matchId), { status: 'finished' });
+        }
+    }
+
     if (newSet1 === 2 || newSet2 === 2) {
       setIsTimerRunning(false);
       onComplete({ duration: elapsedTime, team1Wins: newSet1, team2Wins: newSet2, isForced: false, pointLogs: updatedLogs, team1Name: team1Name || "TEAM 1", team2Name: team2Name });
@@ -343,15 +451,32 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
   };
 
   const handleUndo = () => {
-    if (scoreHistory.length === 0) return;
+    if (scoreHistory.length === 0 || !isHost) return;
     const last = scoreHistory[scoreHistory.length - 1];
     setTeam1Score(last.t1Score); setTeam2Score(last.t2Score);
     setTeam1SetWins(last.t1Wins); setTeam2SetWins(last.t2Wins);
     setScoreHistory(prev => prev.slice(0, -1));
     setPointLogs(prev => prev.slice(0, -1));
+
+    if (matchId) {
+        const db = getFirestore();
+        updateDoc(doc(db, 'matches', matchId), {
+            hostScore: last.t2Score,
+            guestScore: last.t1Score,
+            hostSets: last.t2Wins,
+            guestSets: last.t1Wins
+        });
+    }
   };
 
   const handleExitPress = () => {
+    if (!isHost) {
+        Alert.alert("안내", "방장만 경기를 중단할 수 있습니다. 경기를 나가시겠습니까?", [
+            { text: "아니오", style: "cancel" },
+            { text: "네 (나가기)", onPress: () => { if (onClearGuestMatch) onClearGuestMatch(); onCancel(); } }
+        ]);
+        return;
+    }
     setIsTimerRunning(false);
     setShowExitModal(true);
   };
@@ -359,6 +484,11 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
   const handleExitConfirm = (reason: 'injury' | 'etc' | 'cancel') => {
     setShowExitModal(false);
     safeSendMessage({ type: 'GAME_END' });
+
+    if (matchId && isHost) {
+        const db = getFirestore();
+        updateDoc(doc(db, 'matches', matchId), { status: 'canceled' });
+    }
 
     if (reason === 'cancel') {
         onCancel();
@@ -376,6 +506,14 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
     setIsTimerRunning(true);
   };
 
+  const handleBackPress = () => {
+      if (isWaitingAcceptance && matchId) {
+          const db = getFirestore();
+          updateDoc(doc(db, 'matches', matchId), { status: 'canceled' });
+      }
+      onCancel();
+  };
+
   const renderSetupMode = () => (
     <View style={{flex: 1, backgroundColor: '#0f172a'}}>
       <StatusBar barStyle="light-content" backgroundColor="#1e293b" translucent={false} />
@@ -383,14 +521,14 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
           <SafeAreaView style={{flex: 1}}>
               <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{flex: 1}}>
                   <ScrollView contentContainerStyle={{flexGrow: 1, padding: 24}}>
-                      <TouchableOpacity onPress={onCancel} style={styles.backButton}>
+                      <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
                           <ArrowLeft size={28} color="#94a3b8" />
                       </TouchableOpacity>
                       <View style={{flex: 1, justifyContent: 'center', paddingBottom: 60}}>
                           <View style={styles.setupHeader}>
                               <Text style={styles.setupTitle}>MATCH SETUP</Text>
                               <Text style={styles.setupSubtitle}>경기 참가자를 입력해주세요</Text>
-                              <View style={styles.noticeContainer}><Text style={styles.noticeText}>📌 위쪽 입력란이 상대편, 아래쪽 입력란이 내 편입니다.</Text></View>
+                              <View style={styles.noticeContainer}><Text style={styles.noticeText}>📌 친구 선택 시 실시간 동기화 초대가 발송됩니다.</Text></View>
                           </View>
                           <View style={styles.formCard}>
                               <View style={styles.inputGroup}>
@@ -403,7 +541,7 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
                                               placeholder="상대 이름 (직접 입력)"
                                               placeholderTextColor="#64748b"
                                               value={team1Name}
-                                              onChangeText={setTeam1Name}
+                                              onChangeText={(txt) => { setTeam1Name(txt); setOpponentUid(null); }}
                                               autoCorrect={false}
                                           />
                                           <TouchableOpacity style={styles.friendSelectBtn} onPress={() => setIsFriendModalVisible(true)} activeOpacity={0.8}>
@@ -429,8 +567,15 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
                               </View>
                           </View>
                       </View>
-                      <TouchableOpacity style={styles.startButton} onPress={handleStartButtonPress}>
-                          <Text style={styles.startButtonText}>설정 완료</Text>
+                      <TouchableOpacity style={styles.startButton} onPress={handleStartButtonPress} disabled={isWaitingAcceptance || isLoading}>
+                          {isWaitingAcceptance ? (
+                              <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                                  <ActivityIndicator size="small" color="#0f172a" />
+                                  <Text style={styles.startButtonText}>상대방 수락 대기중...</Text>
+                              </View>
+                          ) : (
+                              <Text style={styles.startButtonText}>설정 완료</Text>
+                          )}
                       </TouchableOpacity>
                   </ScrollView>
               </KeyboardAvoidingView>
@@ -442,7 +587,7 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
   const renderGameMode = () => (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" translucent={false} />
-      {showWatchGuide && (
+      {showWatchGuide && isHost && (
         <Animated.View style={[styles.watchGuideContainer, { opacity: guideOpacity }]} pointerEvents="none">
             <View style={styles.watchGuideContent}><Watch size={24} color="#34D399" /><Text style={styles.watchGuideText}>워치 연결됨! 터치하여 득점 기록</Text></View>
         </Animated.View>
@@ -454,7 +599,7 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
                 <View style={styles.timerBadge}><Text style={styles.timerText}>{formatTime(elapsedTime)}</Text></View>
                 <View style={{width: 24}} />
             </View>
-            <TouchableOpacity style={styles.scoreTouchArea} onPress={() => handleScore('team1')} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.scoreTouchArea} onPress={() => { if(isHost) handleScore('team1') }} activeOpacity={isHost ? 0.8 : 1}>
                 <View style={styles.playerBadge}><Text style={styles.playerName}>{team1Name || "TEAM 1"}</Text></View>
                 <Text style={styles.bigScore}>{team1Score}</Text>
                 <View style={styles.setScoreContainer}><Text style={styles.setScoreLabel}>SET SCORE</Text><Text style={styles.setScoreValue}>{team1SetWins}</Text></View>
@@ -462,22 +607,29 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
         </LinearGradient>
 
         <LinearGradient colors={['#38BDF8', '#22D3EE']} style={styles.scoreArea}>
-            <TouchableOpacity style={styles.scoreTouchArea} onPress={() => handleScore('team2')} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.scoreTouchArea} onPress={() => { if(isHost) handleScore('team2') }} activeOpacity={isHost ? 0.8 : 1}>
                 <View style={styles.setScoreContainerTop}><Text style={styles.setScoreLabel}>SET SCORE</Text><Text style={styles.setScoreValue}>{team2SetWins}</Text></View>
                 <Text style={styles.bigScore}>{team2Score}</Text>
                 <View style={styles.playerBadge}><Text style={styles.playerName}>{team2Name}</Text></View>
             </TouchableOpacity>
 
             <View style={styles.controlsBar}>
-                <TouchableOpacity onPress={handleUndo} style={styles.controlButtonSide} disabled={scoreHistory.length === 0} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-                    <RotateCcw size={28} color={scoreHistory.length === 0 ? "rgba(255,255,255,0.4)" : "white"} />
-                    <Text style={[styles.controlLabel, scoreHistory.length === 0 && {opacity: 0.4}]}>되돌리기</Text>
+                <TouchableOpacity onPress={handleUndo} style={styles.controlButtonSide} disabled={scoreHistory.length === 0 || !isHost} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+                    <RotateCcw size={28} color={scoreHistory.length === 0 || !isHost ? "rgba(255,255,255,0.4)" : "white"} />
+                    <Text style={[styles.controlLabel, (scoreHistory.length === 0 || !isHost) && {opacity: 0.4}]}>되돌리기</Text>
                 </TouchableOpacity>
                 <View style={{flex: 1}} />
-                <TouchableOpacity onPress={() => setIsTimerRunning(!isTimerRunning)} style={styles.controlButtonSide} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
-                    {isTimerRunning ? <Pause size={32} color="white" fill="white" /> : <Play size={32} color="white" fill="white" />}
-                    <Text style={styles.controlLabel}>{isTimerRunning ? "일시정지" : "계속하기"}</Text>
-                </TouchableOpacity>
+                {isHost ? (
+                    <TouchableOpacity onPress={() => setIsTimerRunning(!isTimerRunning)} style={styles.controlButtonSide} hitSlop={{top: 15, bottom: 15, left: 15, right: 15}}>
+                        {isTimerRunning ? <Pause size={32} color="white" fill="white" /> : <Play size={32} color="white" fill="white" />}
+                        <Text style={styles.controlLabel}>{isTimerRunning ? "일시정지" : "계속하기"}</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <View style={styles.controlButtonSide}>
+                        <Activity size={32} color="rgba(255,255,255,0.7)" />
+                        <Text style={[styles.controlLabel, {color: 'rgba(255,255,255,0.7)'}]}>관전 중</Text>
+                    </View>
+                )}
             </View>
         </LinearGradient>
       </View>
@@ -503,6 +655,7 @@ export function ScoreTracker({ onComplete, onCancel }: ScoreTrackerProps) {
                     renderItem={({item}) => (
                         <TouchableOpacity style={styles.friendItem} onPress={() => {
                             setTeam1Name(item.name);
+                            setOpponentUid(item.id);
                             setIsFriendModalVisible(false);
                         }}>
                             <Image source={item.avatar} style={styles.friendAvatar} />
