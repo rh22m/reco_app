@@ -9,7 +9,6 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { login, getProfile } from '@react-native-seoul/kakao-login';
 
 // onLogin이 비동기 결과를 반환할 수 있도록 Promise 타입 추가 (기존과 동일)
 interface LoginScreenProps {

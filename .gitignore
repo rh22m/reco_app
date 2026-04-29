@@ -84,3 +84,7 @@ Thumbs.db
 /.idea/workspace.xml
 /android/app/.cxx/Debug/
 /android/app/.cxx/tools/
+
+# environment variables
+.env
+env.d.ts

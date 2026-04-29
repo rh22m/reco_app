@@ -31,6 +31,17 @@ import {
   signOut,
   User as FirebaseUser,
 } from 'firebase/auth';
+
+import {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  FIREBASE_MEASUREMENT_ID
+} from '@env';
+
 import {
   getFirestore,
   initializeFirestore,
@@ -77,13 +88,13 @@ import MatchHistoryScreen from './Screens/Profile/MatchHistoryScreen';
 import { PointLog, applyTimeDecayRD } from './utils/rmrCalculator';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCKl2OZU06cWYFDkODLqsd3i4vtlGlzems",
-  authDomain: "rally-app-14c24.firebaseapp.com",
-  projectId: "rally-app-14c24",
-  storageBucket: "rally-app-14c24.firebasestorage.app",
-  messagingSenderId: "451873318217",
-  appId: "1:451873318217:android:e22aefac1cf00979686698",
-  measurementId: "G-345DR2NF7F"
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: FIREBASE_MEASUREMENT_ID
 };
 
 let app;
