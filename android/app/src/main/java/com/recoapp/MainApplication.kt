@@ -1,4 +1,4 @@
-package com.rally_app
+package com.recoapp
 
 import android.app.Application
 import com.facebook.react.PackageList

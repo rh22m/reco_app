@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "rally_app.app"
-               BlueprintName = "rally_app"
-               ReferencedContainer = "container:rally_app.xcodeproj">
+               BuildableName = "RECO.app"
+               BlueprintName = "RECO"
+               ReferencedContainer = "container:RECO.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "rally_appTests.xctest"
-               BlueprintName = "rally_appTests"
-               ReferencedContainer = "container:rally_app.xcodeproj">
+               BuildableName = "RECOTests.xctest"
+               BlueprintName = "RECOTests"
+               ReferencedContainer = "container:RECO.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "rally_app.app"
-            BlueprintName = "rally_app"
-            ReferencedContainer = "container:rally_app.xcodeproj">
+            BuildableName = "RECO.app"
+            BlueprintName = "RECO"
+            ReferencedContainer = "container:RECO.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "rally_app.app"
-            BlueprintName = "rally_app"
-            ReferencedContainer = "container:rally_app.xcodeproj">
+            BuildableName = "RECO.app"
+            BlueprintName = "RECO"
+            ReferencedContainer = "container:RECO.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

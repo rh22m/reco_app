@@ -1,4 +1,4 @@
-package com.rally_app
+package com.recoapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
