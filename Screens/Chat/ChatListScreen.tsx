@@ -91,7 +91,7 @@ export default function ChatListScreen() {
 
         let avatarSource = require('../../assets/images/profile.png');
         if (opponentId === 'bot') {
-          avatarSource = require('../../assets/images/rally-logo.png');
+          avatarSource = require('../../assets/images/reco-logo.png');
         } else if (finalAvatarUrl) {
           avatarSource = { uri: finalAvatarUrl };
         }
@@ -121,7 +121,7 @@ export default function ChatListScreen() {
           lastMessage: '안녕하세요! 랠리 AI 챗봇입니다. 궁금한 점이 있으신가요?',
           time: '상시',
           unreadCount: 0,
-          avatar: require('../../assets/images/rally-logo.png'),
+          avatar: require('../../assets/images/reco-logo.png'),
           type: 'bot',
         });
       }

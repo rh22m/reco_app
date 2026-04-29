@@ -4,11 +4,134 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" name="Changes" comment="AI 분석 초안 커밋" />
+    <list default="true" id="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" name="Changes" comment="앱 명칭 전면 수정">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Screens/Auth/LoginScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Screens/Auth/LoginScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Screens/Auth/SignUpScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Screens/Auth/SignUpScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Screens/Chat/ChatListScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Screens/Chat/ChatListScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Screens/Chat/ChatRoomScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Screens/Chat/ChatRoomScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/images/rally-logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/reco-logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/WatchScoreTracker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/WatchScoreTracker.tsx" afterDir="false" />
+    </list>
+    <list id="bec99eaf-3a58-4741-a0a4-dd14bee4c395" name="ignore" comment="웨어러블 연동을 위한 의존성 업데이트">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.cmake/api/v1/reply/cache-v2-0c7ea0a3ac2ccc9ea7e3.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.cmake/api/v1/reply/cmakeFiles-v1-8ca4b660071106dd3479.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.cmake/api/v1/reply/codemodel-v2-6a3c61c8231e5717b2ed.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.cmake/api/v1/reply/index-2025-11-22T13-19-14-0603.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.cmake/api/v1/reply/target-appmodules-Debug-f2a7d953b11da28be7c4.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.cmake/api/v1/reply/target-react_codegen_rnsvg-Debug-0bb98334f3e3e8a3c30c.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/CMakeError.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/VerifyGlobs.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/CMakeFiles/rules.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/android_gradle_build.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/android_gradle_build.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/android_gradle_build_mini.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/android_gradle_build_mini.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/build_file_index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/build_file_index.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/compile_commands.json.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/arm64-v8a/configure_fingerprint.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.cmake/api/v1/reply/cache-v2-3f6d1fde4cffe20f95cd.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.cmake/api/v1/reply/cmakeFiles-v1-a9afe5af63ccc67b4fef.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.cmake/api/v1/reply/codemodel-v2-a6e0dbfb2533016bdd8d.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.cmake/api/v1/reply/index-2025-11-22T13-20-05-0945.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.cmake/api/v1/reply/target-appmodules-Debug-a480edc6ccd1690b5605.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.cmake/api/v1/reply/target-react_codegen_rnsvg-Debug-422b6e32dace05f8eb0b.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/CMakeError.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/VerifyGlobs.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/CMakeFiles/rules.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/android_gradle_build.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/android_gradle_build.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/android_gradle_build_mini.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/android_gradle_build_mini.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/build_file_index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/build_file_index.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/compile_commands.json.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/armeabi-v7a/configure_fingerprint.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.cmake/api/v1/reply/cache-v2-0e8a61765bca01f69ecd.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.cmake/api/v1/reply/cmakeFiles-v1-57447f2a29e168346a3e.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.cmake/api/v1/reply/codemodel-v2-adf4286015a5b9e83694.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.cmake/api/v1/reply/index-2025-11-22T13-20-51-0777.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.cmake/api/v1/reply/target-appmodules-Debug-964f1ff8b777196d7d2b.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.cmake/api/v1/reply/target-react_codegen_rnsvg-Debug-ec3f226b438b1cb57979.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/CMakeError.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/VerifyGlobs.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/CMakeFiles/rules.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/android_gradle_build.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/android_gradle_build.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/android_gradle_build_mini.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/android_gradle_build_mini.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/build_file_index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/build_file_index.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/compile_commands.json.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86/configure_fingerprint.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.cmake/api/v1/reply/cache-v2-def83e63a16835b11826.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.cmake/api/v1/reply/cmakeFiles-v1-13cb3455ed9335bb7ef0.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.cmake/api/v1/reply/codemodel-v2-5f86776f36817462b99b.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.cmake/api/v1/reply/index-2025-11-22T13-21-21-0716.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.cmake/api/v1/reply/target-appmodules-Debug-11b3a9deeb32c0083965.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.cmake/api/v1/reply/target-react_codegen_rnsvg-Debug-85e558518701beb52730.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/CMakeError.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/VerifyGlobs.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_deps" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/_CMakeLTOTest-CXX/bin/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/appmodules.dir/Users/5dplata/Desktop/rally_app/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/CMakeFiles/rules.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/android_gradle_build.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/android_gradle_build.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/android_gradle_build_mini.json" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/android_gradle_build_mini.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/build_file_index.txt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/build_file_index.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/cmake_install.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/compile_commands.json.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/Debug/5q493c29/x86_64/configure_fingerprint.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/tools/debug/arm64-v8a/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/tools/debug/armeabi-v7a/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/tools/debug/x86/compile_commands.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/.cxx/tools/debug/x86_64/compile_commands.json" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="module" />
+      <option value="repository" />
+    </option>
   </component>
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
@@ -30,12 +153,72 @@
     &quot;assignee&quot;: &quot;rh22m&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/rh22m/rally-app.git",
-    "accountId": "1c8002c4-b39f-4a95-93c9-bbf7e0654aef"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/rh22m/rally-app.git&quot;,
+    &quot;accountId&quot;: &quot;1c8002c4-b39f-4a95-93c9-bbf7e0654aef&quot;
   }
-}]]></component>
+}</component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/.idea/workspace.xml">
+      <ranges>
+        <range start1="6" end1="7" start2="6" end2="123" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="11" end1="11" start2="127" end2="134" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="32" end1="38" start2="155" end2="222" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="39" end1="40" start2="223" end2="224" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="54" end1="54" start2="238" end2="241" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="60" end1="60" start2="247" end2="248" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="62" end1="62" start2="250" end2="251" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="64" end1="66" start2="253" end2="255" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="77" end1="82" start2="266" end2="271" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="88" end1="88" start2="277" end2="278" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="93" end1="94" start2="283" end2="356" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="95" end1="98" start2="357" end2="360" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="99" end1="100" start2="361" end2="362" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="101" end1="102" start2="363" end2="364" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="103" end1="106" start2="365" end2="368" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="107" end1="108" start2="369" end2="370" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="109" end1="110" start2="371" end2="372" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="111" end1="114" start2="373" end2="376" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="115" end1="116" start2="377" end2="378" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="117" end1="118" start2="379" end2="380" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="119" end1="122" start2="381" end2="384" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="123" end1="124" start2="385" end2="386" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="125" end1="126" start2="387" end2="388" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="127" end1="130" start2="389" end2="392" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="131" end1="132" start2="393" end2="394" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="133" end1="134" start2="395" end2="396" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="135" end1="138" start2="397" end2="400" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="139" end1="140" start2="401" end2="402" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="141" end1="142" start2="403" end2="404" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="143" end1="146" start2="405" end2="408" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="147" end1="148" start2="409" end2="410" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="149" end1="150" start2="411" end2="412" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="151" end1="154" start2="413" end2="416" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="155" end1="156" start2="417" end2="418" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="157" end1="158" start2="419" end2="420" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="159" end1="162" start2="421" end2="424" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="163" end1="164" start2="425" end2="426" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="165" end1="166" start2="427" end2="428" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="167" end1="170" start2="429" end2="432" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="171" end1="172" start2="433" end2="434" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="173" end1="174" start2="435" end2="436" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="175" end1="178" start2="437" end2="440" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="179" end1="180" start2="441" end2="442" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="181" end1="182" start2="443" end2="444" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="183" end1="186" start2="445" end2="448" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="187" end1="188" start2="449" end2="450" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="189" end1="190" start2="451" end2="452" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="191" end1="194" start2="453" end2="456" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="195" end1="196" start2="457" end2="458" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="197" end1="198" start2="459" end2="460" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="199" end1="202" start2="461" end2="464" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="203" end1="204" start2="465" end2="466" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="205" end1="206" start2="467" end2="676" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="256" end1="267" start2="726" end2="752" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+      </ranges>
+    </file>
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
   </component>

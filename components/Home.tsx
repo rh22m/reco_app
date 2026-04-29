@@ -659,7 +659,7 @@ export function Home({ onStartGame, onGoToChat }: HomeProps) {
       <View style={styles.header}>
         <View style={styles.logoContainer}>
           <View style={styles.logoWrapper}>
-            <Image source={require('../assets/images/rally-logo.png')} style={styles.logo} />
+            <Image source={require('../assets/images/reco-logo.png')} style={styles.logo} />
             <Text style={styles.logoText}>RECO</Text>
           </View>
           <TouchableOpacity onPress={() => setIsNotifModalVisible(true)} style={styles.notificationButton}>

@@ -109,7 +109,7 @@ export default function ChatRoomScreen() {
   useEffect(() => {
     if (opponentId === 'bot') {
       setOpponentProfile({
-        id: 'bot', name: '레코 AI 챗봇', location: '레코 공식 고객센터', tier: 'AI Master', win: 999, loss: 0, mannerScore: 5.0, avatar: require('../../assets/images/rally-logo.png'),
+        id: 'bot', name: '레코 AI 챗봇', location: '레코 공식 고객센터', tier: 'AI Master', win: 999, loss: 0, mannerScore: 5.0, avatar: require('../../assets/images/reco-logo.png'),
       });
       return;
     }

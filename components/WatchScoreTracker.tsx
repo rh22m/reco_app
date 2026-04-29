@@ -59,7 +59,7 @@ const WatchScoreTracker = () => {
         <View style={styles.waitingIconCircle}>
             <Smartphone size={32} color="#34D399" />
         </View>
-        <Text style={styles.waitingTitle}>Rally</Text>
+        <Text style={styles.waitingTitle}>RECO</Text>
         <Text style={styles.waitingSubtitle}>휴대폰에서 경기를{"\n"}시작해주세요</Text>
       </View>
     );

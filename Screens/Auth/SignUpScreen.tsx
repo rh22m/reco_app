@@ -849,7 +849,7 @@ export default function SignUpScreen({
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={require('../../assets/images/rally-logo.png')} style={styles.logo} />
+        <Image source={require('../../assets/images/reco-logo.png')} style={styles.logo} />
         <StepIndicator currentStep={currentStep} />
         {renderStep()}
         <View style={styles.linksContainer}>

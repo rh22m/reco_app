@@ -85,7 +85,7 @@ export default function LoginScreen({ onGoToSignUp, onLogin }: LoginScreenProps)
       <View style={styles.content}>
         {/* 1. 로고 */}
         <Image
-          source={require('../../assets/images/rally-logo.png')}
+          source={require('../../assets/images/reco-logo.png')}
           style={styles.logo}
           resizeMode="contain"
         />
