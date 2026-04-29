@@ -82,7 +82,7 @@ const firebaseConfig = {
   projectId: "rally-app-14c24",
   storageBucket: "rally-app-14c24.firebasestorage.app",
   messagingSenderId: "451873318217",
-  appId: "1:451873318217:web:b99a488672291fa0686698",
+  appId: "1:451873318217:android:e22aefac1cf00979686698",
   measurementId: "G-345DR2NF7F"
 };
 
@@ -331,7 +331,6 @@ function MainScreen({
     ] as PointLog[]
   };
 
-  // 상대방 경기 초대 감지 리스너 (게스트 모드)
   useEffect(() => {
     if (!user) return;
     const matchesRef = collection(db, 'matches');
@@ -351,7 +350,7 @@ function MainScreen({
               { text: "수락", onPress: () => {
                   updateDoc(doc(db, 'matches', change.doc.id), { status: 'accepted' });
                   setGuestMatchId(change.doc.id);
-                  setCurrentScreen('score'); // 경기 모드로 화면 전환
+                  setCurrentScreen('score');
               }}
             ]
           );
@@ -533,7 +532,6 @@ export default function App() {
   const [authScreen, setAuthScreen] = useState<'login' | 'signup'>('login');
 
   const [isFirstLogin, setIsFirstLogin] = useState(false);
-
   const [isSigningUp, setIsSigningUp] = useState(false);
   const isSigningUpRef = useRef(false);
 
@@ -553,14 +551,12 @@ export default function App() {
     requestPermissions();
   }, []);
 
-  // 사용자 로그인 감지 및 프로필 실시간 구독, RD Decay(부패) 로직 적용
   useEffect(() => {
     let unsubscribeProfile: (() => void) | undefined;
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
 
-      // 기존 리스너가 있다면 정리
       if (unsubscribeProfile) {
           unsubscribeProfile();
       }
@@ -569,12 +565,9 @@ export default function App() {
           const userDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'profile', 'info');
 
           try {
-              // 1. RD 부패(Decay) 로직 적용을 위한 단발성 조회
               const snap = await getDoc(userDocRef);
               if (snap.exists()) {
                   const data = snap.data();
-
-                  // Firestore Timestamp 객체일 경우 toMillis() 변환 지원, 일반 숫자일 경우 그대로 사용
                   let lastMatchTime = 0;
                   if (data.lastMatchAt) {
                       lastMatchTime = typeof data.lastMatchAt.toMillis === 'function'
@@ -582,12 +575,10 @@ export default function App() {
                           : data.lastMatchAt;
                   }
 
-                  // 기록된 마지막 경기 시간이 존재할 때만 부패 계산 수행
                   if (lastMatchTime > 0) {
                       const currentRD = data.rd || 350;
                       const decayedRD = applyTimeDecayRD(currentRD, lastMatchTime);
 
-                      // 부패가 발생하여 RD가 올랐다면 DB에 병합 업데이트 (이후 onSnapshot이 새로운 데이터를 잡음)
                       if (decayedRD > currentRD) {
                           await setDoc(userDocRef, { rd: decayedRD }, { merge: true });
                       }
@@ -597,7 +588,6 @@ export default function App() {
               console.error("RD Decay check error:", e);
           }
 
-          // 2. 실시간 데이터 구독 설정
           unsubscribeProfile = onSnapshot(userDocRef, (snap) => {
               if (snap.exists()) {
                   setUserProfile(snap.data());
@@ -615,9 +605,7 @@ export default function App() {
 
     return () => {
         unsubscribeAuth();
-        if (unsubscribeProfile) {
-            unsubscribeProfile();
-        }
+        if (unsubscribeProfile) unsubscribeProfile();
     };
   }, []);
 
@@ -632,14 +620,16 @@ export default function App() {
     }
   };
 
-  const checkEmailAvailability = async (email: string): Promise<boolean> => {
+  // 🔥 [신규 추가] 카카오 ID(또는 이메일) 기반 중복 가입 체크 로직
+  const checkKakaoDuplicate = async (kakaoId: string): Promise<boolean> => {
     try {
-      const q = query(collectionGroup(db, 'profile'), where('email', '==', email));
+      // profile 내부에 저장된 kakaoId 필드로 기존 유저 색인
+      const q = query(collectionGroup(db, 'profile'), where('kakaoId', '==', kakaoId));
       const snapshot = await getDocs(q);
-      return snapshot.empty;
-    } catch (e: any) {
-      console.error("Email check error:", e);
-      return true;
+      return !snapshot.empty; // 정보가 비어있지 않다(true)면 이미 가입된 계정!
+    } catch (e) {
+      console.error("Kakao duplicate check error:", e);
+      return false;
     }
   };
 
@@ -672,6 +662,7 @@ export default function App() {
       const profileData = {
         uid: cred.user.uid,
         email: safeEmail,
+        kakaoId: password, // 🔥 카카오 고유 ID를 DB 프로필에 저장해 둡니다 (비밀번호로 쓴 값을 재활용)
         nickname: nickname || '사용자',
         rmr: rmr || 1000,
         rd: rd || 350,
@@ -701,7 +692,7 @@ export default function App() {
       }
       let msg = error.message;
       if (error.message === "DB_TIMEOUT") msg = "서버 응답이 지연되어 가입을 안전하게 취소했습니다.";
-      else if (error.code === 'auth/email-already-in-use') msg = "이미 사용 중인 이메일입니다.";
+      else if (error.code === 'auth/email-already-in-use') msg = "이미 사용 중인 카카오 이메일 계정입니다.";
       Alert.alert("회원가입 실패", msg);
     } finally {
         isSigningUpRef.current = false;
@@ -737,12 +728,16 @@ export default function App() {
         <SafeAreaView style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor="#111827" />
           {authScreen === 'login' ? (
-            <LoginScreen onGoToSignUp={() => setAuthScreen('signup')} onLogin={handleLogin} />
+            <LoginScreen
+              onGoToSignUp={() => setAuthScreen('signup')}
+              onLogin={handleLogin}
+            />
           ) : (
             <SignUpScreen
               onGoToLogin={() => setAuthScreen('login')}
               onSignUp={handleSignUp}
-              checkEmailAvailability={checkEmailAvailability}
+              // 🔥 프롭스 교체: 이메일 체크 지우고 카카오 중복 체크 함수를 넘겨줍니다.
+              checkKakaoDuplicate={checkKakaoDuplicate}
               checkNicknameAvailability={checkNicknameAvailability}
             />
           )}

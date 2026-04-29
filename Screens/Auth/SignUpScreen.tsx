@@ -26,6 +26,7 @@ import {
   ChevronLeft,
 } from 'lucide-react-native';
 import { login, getProfile } from '@react-native-seoul/kakao-login';
+//import firestore from '@react-native-firebase/firestore';
 
 // RMRCalculator에서 퀴즈 계산 관련 함수 임포트
 import { getInitialRMRAndRD } from '../../utils/rmrCalculator';
@@ -35,7 +36,7 @@ const { width } = Dimensions.get('window');
 interface SignUpScreenProps {
   onGoToLogin: () => void;
   onSignUp: (email: string, password: string, nickname: string, rmr: number, rd: number, region: string, gender: string) => void;
-  checkEmailAvailability?: (email: string) => Promise<boolean>; // 카카오 연동으로 더 이상 필수는 아니지만 프롭스 유지를 위해 남겨둠
+  checkKakaoDuplicate: (kakaoId: string) => Promise<boolean>;
   checkNicknameAvailability: (nickname: string) => Promise<boolean>;
 }
 
@@ -182,7 +183,15 @@ const Step1_TOS = ({ onNext }: { onNext: () => void }) => {
   );
 };
 
-const Step2_KakaoVerify = ({ onNext }: { onNext: (data: any) => void }) => {
+const Step2_KakaoVerify = ({
+  onNext,
+  onGoToLogin,
+  checkKakaoDuplicate // 추가
+}: {
+  onNext: (data: any) => void;
+  onGoToLogin: () => void;
+  checkKakaoDuplicate: (kakaoId: string) => Promise<boolean>; // 추가
+}) => {
   const [isVerified, setIsVerified] = useState(false);
 
   const handleKakaoVerification = async () => {
@@ -197,6 +206,19 @@ const Step2_KakaoVerify = ({ onNext }: { onNext: (data: any) => void }) => {
           '회원가입을 위해 카카오 이메일 정보가 필수입니다. 카카오 연동 해제 후 다시 시도하여 이메일 제공에 동의해주세요.'
         );
         return; // 여기서 멈추기 때문에 파이어베이스 에러가 안 납니다.
+      }
+
+      const kakaoIdString = profile.id.toString();
+
+      const isDuplicate = await checkKakaoDuplicate(kakaoIdString);
+
+      if (isDuplicate) {
+        Alert.alert(
+          '이미 가입된 계정',
+          '해당 카카오 계정으로 가입된 정보가 있습니다. 로그인 화면으로 이동합니다.',
+          [{ text: '확인', onPress: onGoToLogin }]
+        );
+        return; // 중복이면 여기서 멈춤
       }
 
       setIsVerified(true);
@@ -237,14 +259,6 @@ const Step2_KakaoVerify = ({ onNext }: { onNext: (data: any) => void }) => {
           <Text style={styles.verifiedText}>인증이 완료되었습니다.</Text>
         </View>
       )}
-
-      {/* 개발용 건너뛰기 버튼 (이메일 형식이 정상적이므로 에러 안 남) */}
-      <TouchableOpacity style={styles.skipButton} onPress={() => {
-        setIsVerified(true);
-        setTimeout(() => onNext({ email: 'test1234@kakao.com', kakaoId: 'dev_user', password: 'dev_password' }), 500);
-      }}>
-        <Text style={styles.linkText}>[개발용] 본인인증 건너뛰기</Text>
-      </TouchableOpacity>
     </>
   );
 };
@@ -515,7 +529,7 @@ const Step4_RMRQuiz = ({ onComplete }: { onComplete: (correctCount: number) => v
 export default function SignUpScreen({
   onGoToLogin,
   onSignUp,
-  checkEmailAvailability,
+  checkKakaoDuplicate,
   checkNicknameAvailability
 }: SignUpScreenProps) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -547,7 +561,14 @@ export default function SignUpScreen({
   const renderStep = () => {
     switch (currentStep) {
       case 1: return <Step1_TOS onNext={handleNextStep} />;
-      case 2: return <Step2_KakaoVerify onNext={handleNextStep} />;
+      case 2:
+              return (
+                <Step2_KakaoVerify
+                  onNext={handleNextStep}
+                  onGoToLogin={onGoToLogin}
+                  checkKakaoDuplicate={checkKakaoDuplicate} // Step2로 토스해줍니다.
+                />
+              );
       case 3:
         return (
           <Step3_AccountInfo

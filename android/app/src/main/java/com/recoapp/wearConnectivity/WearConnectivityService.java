@@ -1,4 +1,4 @@
-package com.rally_app.wearConnectivity;
+package com.reco_app.wearConnectivity;
 
 import android.content.Intent;
 import com.facebook.react.HeadlessJsTaskService;

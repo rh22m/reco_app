@@ -4,15 +4,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" name="Changes" comment="앱 명칭 전면 수정">
+    <list default="true" id="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" name="Changes" comment="카카오 연동 회원가입">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Screens/Auth/LoginScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Screens/Auth/LoginScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Screens/Auth/SignUpScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/Screens/Auth/SignUpScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/recoapp/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/recoapp/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/recoapp/wearConnectivity/WearConnectivityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/recoapp/wearConnectivity/WearConnectivityService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/recoapp/wearConnectivity/WearListenerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/recoapp/wearConnectivity/WearListenerService.java" afterDir="false" />
     </list>
     <list id="bec99eaf-3a58-4741-a0a4-dd14bee4c395" name="ignore" comment="웨어러블 연동을 위한 의존성 업데이트">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -162,64 +159,68 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/.idea/workspace.xml">
       <ranges>
-        <range start1="10" end1="15" start2="10" end2="15" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
-        <range start1="164" end1="218" start2="164" end2="217" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
-        <range start1="222" end1="223" start2="221" end2="222" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="237" end1="237" start2="236" end2="239" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="243" end1="243" start2="245" end2="246" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="245" end1="245" start2="248" end2="249" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="247" end1="249" start2="251" end2="253" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="260" end1="265" start2="264" end2="269" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="271" end1="271" start2="275" end2="276" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="276" end1="277" start2="281" end2="330" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
-        <range start1="278" end1="281" start2="331" end2="334" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="282" end1="283" start2="335" end2="336" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="284" end1="285" start2="337" end2="338" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="286" end1="289" start2="339" end2="342" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="290" end1="291" start2="343" end2="344" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="292" end1="293" start2="345" end2="346" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="294" end1="297" start2="347" end2="350" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="298" end1="299" start2="351" end2="352" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="300" end1="301" start2="353" end2="354" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="302" end1="305" start2="355" end2="358" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="306" end1="307" start2="359" end2="360" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="308" end1="309" start2="361" end2="362" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="310" end1="313" start2="363" end2="366" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="314" end1="315" start2="367" end2="368" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="316" end1="317" start2="369" end2="370" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="318" end1="321" start2="371" end2="374" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="322" end1="323" start2="375" end2="376" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="324" end1="325" start2="377" end2="378" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="326" end1="329" start2="379" end2="382" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="330" end1="331" start2="383" end2="384" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="332" end1="333" start2="385" end2="386" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="334" end1="337" start2="387" end2="390" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="338" end1="339" start2="391" end2="392" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="340" end1="341" start2="393" end2="394" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="342" end1="345" start2="395" end2="398" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="346" end1="347" start2="399" end2="400" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="348" end1="349" start2="401" end2="402" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="350" end1="353" start2="403" end2="406" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="354" end1="355" start2="407" end2="408" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="356" end1="357" start2="409" end2="410" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="358" end1="361" start2="411" end2="414" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="362" end1="363" start2="415" end2="416" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="364" end1="365" start2="417" end2="418" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="366" end1="369" start2="419" end2="422" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="370" end1="371" start2="423" end2="424" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="372" end1="373" start2="425" end2="426" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="374" end1="377" start2="427" end2="430" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="378" end1="379" start2="431" end2="432" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="380" end1="381" start2="433" end2="434" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="382" end1="385" start2="435" end2="438" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="386" end1="387" start2="439" end2="440" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
-        <range start1="388" end1="389" start2="441" end2="674" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
-        <range start1="439" end1="450" start2="724" end2="750" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="6" end1="7" start2="6" end2="7" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="8" end1="9" start2="8" end2="9" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="10" end1="15" start2="10" end2="12" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="164" end1="217" start2="161" end2="218" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="221" end1="222" start2="222" end2="223" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="236" end1="236" start2="237" end2="240" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="242" end1="242" start2="246" end2="247" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="244" end1="244" start2="249" end2="250" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="246" end1="248" start2="252" end2="254" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="252" end1="252" start2="258" end2="259" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="256" end1="257" start2="263" end2="263" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="259" end1="264" start2="265" end2="270" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="270" end1="270" start2="276" end2="277" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="275" end1="283" start2="282" end2="282" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="325" end1="328" start2="324" end2="327" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="329" end1="330" start2="328" end2="329" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="331" end1="332" start2="330" end2="331" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="333" end1="336" start2="332" end2="335" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="337" end1="338" start2="336" end2="337" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="339" end1="340" start2="338" end2="339" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="341" end1="344" start2="340" end2="343" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="345" end1="346" start2="344" end2="345" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="347" end1="348" start2="346" end2="347" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="349" end1="352" start2="348" end2="351" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="353" end1="354" start2="352" end2="353" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="355" end1="356" start2="354" end2="355" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="357" end1="360" start2="356" end2="359" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="361" end1="362" start2="360" end2="361" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="363" end1="364" start2="362" end2="363" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="365" end1="368" start2="364" end2="367" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="369" end1="370" start2="368" end2="369" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="371" end1="372" start2="370" end2="371" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="373" end1="376" start2="372" end2="375" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="377" end1="378" start2="376" end2="377" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="379" end1="380" start2="378" end2="379" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="381" end1="384" start2="380" end2="383" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="385" end1="386" start2="384" end2="385" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="387" end1="388" start2="386" end2="387" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="389" end1="392" start2="388" end2="391" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="393" end1="394" start2="392" end2="393" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="395" end1="396" start2="394" end2="395" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="397" end1="400" start2="396" end2="399" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="401" end1="402" start2="400" end2="401" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="403" end1="404" start2="402" end2="403" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="405" end1="408" start2="404" end2="407" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="409" end1="410" start2="408" end2="409" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="411" end1="412" start2="410" end2="411" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="413" end1="416" start2="412" end2="415" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="417" end1="418" start2="416" end2="417" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="419" end1="420" start2="418" end2="419" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="421" end1="424" start2="420" end2="423" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="425" end1="426" start2="424" end2="425" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="427" end1="428" start2="426" end2="427" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="429" end1="432" start2="428" end2="431" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="433" end1="434" start2="432" end2="433" changelist="bec99eaf-3a58-4741-a0a4-dd14bee4c395" />
+        <range start1="667" end1="668" start2="666" end2="675" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
+        <range start1="718" end1="729" start2="725" end2="751" changelist="9bea4fd7-fbd9-41bf-bc54-2fdc6a7cce6a" />
       </ranges>
     </file>
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -234,34 +235,39 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DEBUGGABLE_DEVICE": "samsung-sm_s908n-R3CT10QC34X",
+    "DEBUGGABLE_PROCESS": "com.rally_app",
+    "DEBUGGER_ID": "Java",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHOW_ALL_PROCESSES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "com.android.tools.idea.streaming.zoom.toolbar.visible": "false",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/private/var/work/rally_app/assets",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
+    "last_opened_file_path": "/Users/5dplata/Desktop/reco_app/android/app",
+    "settings.editor.selected.configurable": "device.screenrecording"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/android/app" />
       <recent name="$PROJECT_DIR$/assets" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/android/app/src/main/assets" />
       <recent name="$PROJECT_DIR$/android/app/src/main/res/layout" />
-      <recent name="$PROJECT_DIR$/assets/icons" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/assets" />
-      <recent name="$PROJECT_DIR$/.idea" />
-      <recent name="$PROJECT_DIR$/android/app/src/main/assets" />
-      <recent name="$PROJECT_DIR$/android/app/src/main/res/layout" />
+      <recent name="$PROJECT_DIR$/android/app" />
+      <recent name="$PROJECT_DIR$/assets/images" />
+      <recent name="$PROJECT_DIR$/assets/images/notice" />
+      <recent name="$PROJECT_DIR$/assets/images/rackets" />
+      <recent name="$PROJECT_DIR$/Screens/AI" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -272,14 +278,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1761906441617</updated>
-    </task>
-    <task id="LOCAL-00060" summary="티어 인장 이미지 업데이트">
-      <option name="closed" value="true" />
-      <created>1766666818840</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1766666818840</updated>
     </task>
     <task id="LOCAL-00061" summary="웨어러블 연동을 위한 의존성 업데이트">
       <option name="closed" value="true" />
@@ -665,7 +663,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777456771289</updated>
     </task>
-    <option name="localTasksCounter" value="109" />
+    <task id="LOCAL-00109" summary="카카오 연동 회원가입">
+      <option name="closed" value="true" />
+      <created>1777465286651</created>
+      <option name="number" value="00109" />
+      <option name="presentableId" value="LOCAL-00109" />
+      <option name="project" value="LOCAL" />
+      <updated>1777465286651</updated>
+    </task>
+    <option name="localTasksCounter" value="110" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -716,16 +722,31 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="초안 생성" />
-    <MESSAGE value="점수 되돌리기+경고문구, 듀스 기능 구현, 강제 종료 시 승패는 따지지 않도록 수정" />
-    <MESSAGE value="AI 분석 기능 탭 추가. (기능 미구현.)" />
-    <MESSAGE value="방 생성 버튼 추가." />
-    <MESSAGE value="방 생성 구현 초안." />
-    <MESSAGE value="각 화면 기본 시안 제작." />
-    <MESSAGE value="회원가입 단계 삽입" />
-    <MESSAGE value="AIAnalysis+poseHtml 로 인식은 웹으로 연결." />
-    <MESSAGE value="인터페이스, 카메라 전환" />
-    <MESSAGE value="AI 분석 초안 커밋" />
-    <option name="LAST_COMMIT_MESSAGE" value="AI 분석 초안 커밋" />
+    <MESSAGE value="내비게이션 디벨롭, 게임 종료 후 화면 추가" />
+    <MESSAGE value="튜토리얼 영역 수정" />
+    <MESSAGE value="데이터베이스 연동. 회원가입 및 로그인 모듈 연결" />
+    <MESSAGE value="회원가입 임시 커밋" />
+    <MESSAGE value="아이디 중복 체크, 튜토리얼 오류 해소" />
+    <MESSAGE value="로그인 정보 일치 확인" />
+    <MESSAGE value="임시 커밋" />
+    <MESSAGE value="회원가입 데베 연동 클린 커밋" />
+    <MESSAGE value="회원가입 퀴즈 문제 확장, RD값에 영향" />
+    <MESSAGE value="RD(신뢰도)시스템 재구성" />
+    <MESSAGE value="rmr 데이터베이스 동기화, 경기 기록 및 영상 분석 db 저장" />
+    <MESSAGE value="프로필 화면 디벨롭" />
+    <MESSAGE value="매칭 정보 데이터베이스 연동" />
+    <MESSAGE value="채팅 데이터베이스 연동" />
+    <MESSAGE value="매칭 참가 디벨롭, 친구 데이터 서버 연동" />
+    <MESSAGE value="친구 중복 체크, 채팅 알림" />
+    <MESSAGE value="친구 추가, 매너 점수 통일" />
+    <MESSAGE value="안드로이드 버전 크래쉬 수정 (해결 안 됨)" />
+    <MESSAGE value="매너 점수 데이터베이스 연동" />
+    <MESSAGE value="실시간 쌍방 경기모드" />
+    <MESSAGE value="경기 모드 수정, 상대방 티어 정보 데이터베이스 동기화" />
+    <MESSAGE value="매칭 캘린더 수정" />
+    <MESSAGE value="홈화면 방장 정보, 상대방 정보 티어 수정" />
+    <MESSAGE value="앱 명칭 전면 수정" />
+    <MESSAGE value="카카오 연동 회원가입" />
+    <option name="LAST_COMMIT_MESSAGE" value="카카오 연동 회원가입" />
   </component>
 </project>

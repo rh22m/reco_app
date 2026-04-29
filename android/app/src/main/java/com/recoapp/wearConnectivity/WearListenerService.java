@@ -1,4 +1,4 @@
-package com.rally_app.wearConnectivity; // 패키지 이름이 정확해야 합니다.
+package com.reco_app.wearConnectivity; // 패키지 이름이 정확해야 합니다.
 
 import android.content.Intent;
 import com.google.android.gms.wearable.MessageEvent;
