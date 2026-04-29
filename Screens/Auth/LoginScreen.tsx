@@ -2,75 +2,77 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
-import { Mail, Lock } from 'lucide-react-native';
+import { login, getProfile } from '@react-native-seoul/kakao-login';
 
-// [수정] onLogin이 비동기 결과를 반환할 수 있도록 Promise 타입 추가
+// onLogin이 비동기 결과를 반환할 수 있도록 Promise 타입 추가 (기존과 동일)
 interface LoginScreenProps {
   onGoToSignUp: () => void;
   onLogin: (email: string, password: string) => Promise<void>;
 }
 
 export default function LoginScreen({ onGoToSignUp, onLogin }: LoginScreenProps) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // [추가] 에러 메시지 상태 관리
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  // 에러 메시지 상태 관리 (입력창이 통합되었으므로 하나의 에러 상태로 관리)
+  const [loginError, setLoginError] = useState('');
 
-  const handleLoginPress = async () => {
+  const handleKakaoLogin = async () => {
     // 1. 초기화
-    setEmailError('');
-    setPasswordError('');
-    let hasError = false;
-
-    // 2. 입력값 유효성 검사 (빈 값 체크)
-    if (!email.trim()) {
-      setEmailError('이메일을 입력해주세요.');
-      hasError = true;
-    }
-    if (!password.trim()) {
-      setPasswordError('비밀번호를 입력해주세요.');
-      hasError = true;
-    }
-
-    if (hasError) return;
-
-    // 3. 로그인 시도 및 에러 처리
+    setLoginError('');
     setIsLoading(true);
+
     try {
+      // 2. 카카오 로그인 및 프로필 가져오기
+      await login();
+      const profile = await getProfile();
+
+      // 3. 카카오 이메일 제공 동의 확인
+      if (!profile.email) {
+        Alert.alert(
+          '이메일 동의 필요',
+          '로그인을 위해 카카오 이메일 정보가 필수입니다. 카카오 연동 해제 후 다시 시도하여 이메일 제공에 동의해주세요.'
+        );
+        setIsLoading(false);
+        return;
+      }
+
+      // 4. SignUpScreen과 동일하게 이메일과 카카오 ID를 로그인 정보로 사용
+      const email = profile.email;
+      const password = profile.id.toString();
+
+      // 5. 로그인 시도
       await onLogin(email, password);
       // 로그인 성공 시 App.tsx에서 화면 전환 처리됨
+
     } catch (error: any) {
-      console.log('Login Error:', error.code);
+      console.log('Login Error:', error);
+
+      // 카카오 로그인 취소 시 예외 처리
+      if (error.message === 'Logged out' || error.code === 'E_CANCELLED_OPERATION') {
+        setIsLoading(false);
+        return;
+      }
+
       // 파이어베이스 에러 코드를 사용자 친화적 메시지로 변환
       switch (error.code) {
         case 'auth/user-not-found':
         case 'auth/invalid-email':
-        case 'auth/invalid-credential': // 최신 파이어베이스 보안 강화로 통합된 경우 있음
-          setEmailError('일치하는 계정이 없습니다.');
-          break;
+        case 'auth/invalid-credential':
         case 'auth/wrong-password':
-          setPasswordError('비밀번호가 일치하지 않습니다.');
+          setLoginError('가입되지 않은 계정이거나 로그인 정보가 일치하지 않습니다.');
           break;
         case 'auth/too-many-requests':
-          setPasswordError('접속 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.');
+          setLoginError('접속 시도가 너무 많습니다. 잠시 후 다시 시도해주세요.');
           break;
         default:
-          // 그 외 에러는 비밀번호 쪽에 띄우거나, 이메일/비밀번호 둘 다 불확실할 때 표시
-          if (error.message.includes('password')) {
-             setPasswordError('비밀번호를 확인해주세요.');
-          } else {
-             setEmailError('로그인 정보를 다시 확인해주세요.');
-          }
+          setLoginError('로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
       }
     } finally {
       setIsLoading(false);
@@ -90,61 +92,29 @@ export default function LoginScreen({ onGoToSignUp, onLogin }: LoginScreenProps)
           resizeMode="contain"
         />
         <Text style={styles.title}>RECO</Text>
-        <Text style={styles.subtitle}>로그인하여 레코를 시작하세요!</Text>
+        <Text style={styles.subtitle}>카카오 계정으로 간편하게 로그인하세요!</Text>
 
-        {/* 2. 이메일 입력 폼 */}
-        <View style={[styles.inputContainer, emailError ? styles.inputErrorBorder : null]}>
-          <Mail color={emailError ? "#EF4444" : "#9CA3AF"} size={20} style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="이메일"
-            placeholderTextColor="#6B7280"
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              if (emailError) setEmailError(''); // 타이핑 시작하면 에러 지움
-            }}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-        {/* 이메일 에러 메시지 (작은 빨간 글씨) */}
-        <View style={styles.errorContainer}>
-          {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-        </View>
-
-        {/* 3. 비밀번호 입력 폼 */}
-        <View style={[styles.inputContainer, passwordError ? styles.inputErrorBorder : null]}>
-          <Lock color={passwordError ? "#EF4444" : "#9CA3AF"} size={20} style={styles.inputIcon} />
-          <TextInput
-            style={styles.input}
-            placeholder="비밀번호"
-            placeholderTextColor="#6B7280"
-            value={password}
-            onChangeText={(text) => {
-              setPassword(text);
-              if (passwordError) setPasswordError(''); // 타이핑 시작하면 에러 지움
-            }}
-            secureTextEntry
-          />
-        </View>
-        {/* 비밀번호 에러 메시지 (작은 빨간 글씨) */}
-        <View style={styles.errorContainer}>
-          {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-        </View>
-
-        {/* 4. 로그인 버튼 */}
+        {/* 2. 카카오 로그인 버튼 (기존 로그인 버튼 스타일 + 카카오 컬러 적용) */}
         <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
-            onPress={handleLoginPress}
+            style={[styles.kakaoButton, isLoading && styles.buttonDisabled]}
+            onPress={handleKakaoLogin}
             disabled={isLoading}
         >
-          <Text style={styles.buttonText}>
-            {isLoading ? '로그인 중...' : '로그인'}
+          <Image
+            source={{ uri: 'https://developers.kakao.com/assets/img/lib/logos/kakaolink/kakaolink_btn_medium.png' }}
+            style={styles.kakaoIcon}
+          />
+          <Text style={styles.kakaoButtonText}>
+            {isLoading ? '로그인 중...' : '카카오 계정으로 로그인'}
           </Text>
         </TouchableOpacity>
 
-        {/* 5. 회원가입 링크 */}
+        {/* 3. 에러 메시지 (작은 빨간 글씨) */}
+        <View style={styles.errorContainer}>
+          {loginError ? <Text style={styles.errorText}>{loginError}</Text> : null}
+        </View>
+
+        {/* 4. 회원가입 링크 */}
         <View style={styles.footerLink}>
           <Text style={styles.linkText}>계정이 없으신가요? </Text>
           <TouchableOpacity onPress={onGoToSignUp}>
@@ -183,59 +153,41 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
     marginBottom: 40,
   },
-  inputContainer: {
+  kakaoButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#374151',
-    borderRadius: 12,
+    justifyContent: 'center',
+    backgroundColor: '#FEE500',
     width: '100%',
-    marginBottom: 0, // 에러 메시지 공간을 위해 마진 제거 (errorContainer가 담당)
-    paddingHorizontal: 16,
-    height: 56,
-    borderWidth: 1,
-    borderColor: 'transparent', // 기본 테두리 투명
+    paddingVertical: 16,
+    borderRadius: 12,
+    marginTop: 8,
+    marginBottom: 0, // 에러 메시지 공간을 위해 마진 0
   },
-  inputErrorBorder: {
-    borderColor: '#EF4444', // 에러 발생 시 빨간 테두리
+  kakaoIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
+  kakaoButtonText: {
+    color: '#191919',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   errorContainer: {
     width: '100%',
     minHeight: 20, // 에러 메시지 높이 확보
-    marginBottom: 12, // 다음 입력창과의 간격
+    marginBottom: 24, // 다음 UI(푸터 링크)와의 간격
     justifyContent: 'center',
-    paddingLeft: 4,
+    alignItems: 'center',
   },
   errorText: {
     color: '#EF4444', // 빨간색
-    fontSize: 12,
-    marginTop: 4,
-  },
-  inputIcon: {
-    marginRight: 12,
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    color: 'white',
-    height: '100%',
-  },
-  button: {
-    backgroundColor: '#34D399',
-    width: '100%',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
+    fontSize: 14,
     marginTop: 8,
-    marginBottom: 24,
-  },
-  buttonDisabled: {
-    backgroundColor: '#059669',
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: '#111827',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   footerLink: {
     flexDirection: 'row',
