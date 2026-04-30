@@ -26,6 +26,7 @@ import {
   ChevronLeft,
 } from 'lucide-react-native';
 
+import { login, getProfile } from '@react-native-seoul/kakao-login';
 // RMRCalculator에서 퀴즈 계산 관련 함수 임포트
 import { getInitialRMRAndRD } from '../../utils/rmrCalculator';
 

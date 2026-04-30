@@ -30,7 +30,7 @@ import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { getApp } from 'firebase/app';
 
-import { getRmrTier } from '../../utils/rmrCalculator';
+import { getRmrTier, getDisplayTier } from '../../utils/rmrCalculator';
 import { recommendRacket, RacketDetail } from '../../utils/racketRecommender';
 import { AnalysisReport } from '../AI/AIAnalysis';
 
@@ -129,15 +129,7 @@ export default function ProfileScreen({ onLogout, userProfile }: ProfileScreenPr
             const snapshot = await getDocs(q);
             const vHist = snapshot.docs.map(doc => doc.data() as AnalysisReport);
 
-            if (vHist.length === 0) {
-                setVideoHistory([
-                    { id: '1', mode: 'SWING', maxRecord: 115 } as AnalysisReport,
-                    { id: '2', mode: 'SWING', maxRecord: 95 } as AnalysisReport,
-                    { id: '3', mode: 'SWING', maxRecord: 108 } as AnalysisReport,
-                ]);
-            } else {
-                setVideoHistory(vHist);
-            }
+            setVideoHistory(vHist);
 
             // 라켓 DB 데이터 로드
             const racketRef = collection(db, 'rackets');
@@ -163,12 +155,14 @@ export default function ProfileScreen({ onLogout, userProfile }: ProfileScreenPr
     mannerScore: userProfile?.mannerScore ?? 5.0,
     wins: userProfile?.wins || 0,
     losses: userProfile?.losses || 0,
+    rallyCount: userProfile?.rallyCount || 0,
     avatar: userProfile?.avatarUrl ? { uri: userProfile.avatarUrl } : require('../../assets/images/profile.png'),
     videoHistory: videoHistory,
     latestFlow: latestFlow
   };
 
   const currentTierName = getRmrTier(user.rmr);
+  const displayTierName = getDisplayTier(user.rmr, user.rallyCount);
   const currentTierData = TIER_LEVELS.find(t => t.name === currentTierName);
   const currentTierType = currentTierData ? currentTierData.type : 'bronze';
   const targetTierName = selectedTierName ?? currentTierName;
@@ -338,7 +332,7 @@ export default function ProfileScreen({ onLogout, userProfile }: ProfileScreenPr
           </View>
           <View style={styles.verticalDivider} />
           <View style={styles.profileRight}>
-            <View style={styles.statItem}><Text style={styles.statLabel}>티어</Text><Text style={styles.statValueTier}>{currentTierName}</Text></View>
+            <View style={styles.statItem}><Text style={styles.statLabel}>티어</Text><Text style={styles.statValueTier}>{displayTierName}</Text></View>
             <View style={styles.statItem}><Text style={styles.statLabel}>전적</Text><Text style={styles.statValue}>{user.wins}승 {user.losses}패</Text></View>
             <View style={styles.statItem}><Text style={styles.statLabel}>매너</Text><Text style={styles.statValue}>{Number(user.mannerScore).toFixed(1)} / 5.0</Text></View>
           </View>
@@ -373,7 +367,7 @@ export default function ProfileScreen({ onLogout, userProfile }: ProfileScreenPr
                  <Image source={TIER_IMAGES[currentTierType as keyof typeof TIER_IMAGES]} style={styles.mainTierImage} resizeMode="contain" />
               </View>
               <Text style={styles.myScoreText}>{user.rmr} RMR</Text>
-              <Text style={styles.myTierLabel}>현재 나의 티어: <Text style={{color: COLORS[currentTierType as keyof typeof COLORS].front[0]}}>{currentTierName}</Text></Text>
+              <Text style={styles.myTierLabel}>현재 나의 티어: <Text style={{color: COLORS[currentTierType as keyof typeof COLORS].front[0]}}>{displayTierName}</Text></Text>
             </View>
           ) : activeTab === 'info' ? (
             <View style={styles.pyramidSection}>

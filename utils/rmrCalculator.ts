@@ -51,6 +51,12 @@ export const getRmrTier = (rmr: number): string => {
   return 'Gold 1';
 };
 
+// 티어 배치
+export const getDisplayTier = (rmr: number, rallyCount: number = 0): string => {
+  const baseTier = getRmrTier(rmr);
+  return rallyCount <= 3 ? `임시 ${baseTier}` : baseTier;
+};
+
 // 퀴즈 결과에 따른 초기 RMR 및 신뢰도(RD) 계산 함수
 // 기획상 신규 선수는 최대 불확실성인 RD = 300에서 시작해야 하나,
 // 룰 퀴즈 정답 수(이해도)에 따라 초기 불확실성을 동적으로 줄여주기 위해 변형 유지.
