@@ -45,6 +45,27 @@ const PIXEL_TO_REAL_SCALE = (USER_HEIGHT_CM * ARM_LENGTH_RATIO) / 200;
 const MIN_SWING_DISTANCE_PX = 0.15;
 const SWING_TRIGGER_SPEED = 25;
 
+// ============================================================================
+// ✅ [고도화 추가] 카메라 원근감 왜곡 보정을 위한 호모그래피 투영 변환 함수 및 행렬
+// 스마트폰 거치대(약 1.5m~2m 높이)에서 코트를 바라볼 때의 표준 원근 왜곡을 보정합니다.
+// ============================================================================
+const DEFAULT_HOMOGRAPHY_MATRIX = [
+  [ 2.5,  0.0, -0.5 ],
+  [ 0.0,  3.0, -0.8 ],
+  [ 0.0,  0.5,  1.0 ]
+];
+
+function applyHomography(cameraX: number, cameraY: number) {
+  const H = DEFAULT_HOMOGRAPHY_MATRIX;
+  const w = H[2][0] * cameraX + H[2][1] * cameraY + H[2][2];
+  if (w === 0) return { courtX: cameraX, courtY: cameraY };
+  return {
+    courtX: (H[0][0] * cameraX + H[0][1] * cameraY + H[0][2]) / w,
+    courtY: (H[1][0] * cameraX + H[1][1] * cameraY + H[1][2]) / w
+  };
+}
+// ============================================================================
+
 export type AnalysisMode = 'SWING' | 'LUNGE' | 'FOOTWORK' | 'RHYTHM' | 'REALTIME_MATCH';
 type Difficulty = 'EASY' | 'NORMAL' | 'HARD' | 'FULL MATCH';
 type FootworkDirection = 'CENTER' | 'FRONT_LEFT' | 'FRONT_RIGHT' | 'BACK_LEFT' | 'BACK_RIGHT';
@@ -91,8 +112,10 @@ const formatYMD = (dateStr: string) => {
   if (!dateStr) return '';
   let match = dateStr.match(/(\d{4})[./-]\s*(\d{1,2})[./-]\s*(\d{1,2})/);
   if (match) return `${match[1]}. ${match[2]}. ${match[3]}.`;
+
   match = dateStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if (match) return `${match[3]}. ${match[1]}. ${match[2]}.`;
+
   return dateStr.split(',')[0].replace(/(오전|오후).*/, '').trim();
 };
 
@@ -232,6 +255,14 @@ const MODE_DETAILS = {
       '종료 후 폼이 무너진 근본적인 원인을 AI가 진단해 드립니다.'
     ],
     difficultyGuide: ['🟢 EASY: 여유로운 랠리 템포', '🔵 NORMAL: 실전과 유사한 공수 전환', '🔴 HARD: 빠른 템포의 연속 스매시/드라이브 방어']
+  },
+  REALTIME_MATCH: {
+    title: '실전 랠리 (반코트)',
+    scoreCriteria: [],
+    analysisElements: [],
+    gradeCriteria: [],
+    tips: [],
+    difficultyGuide: []
   }
 };
 
@@ -311,7 +342,8 @@ export default function AIAnalysis() {
     count: 0
   });
 
-  const prevPos = useRef<{ x: number; y: number; time: number; speed: number } | null>(null);
+  // ✅ [고도화 추가] prevPos에 원근감이 보정된 courtX, courtY 저장 필드 추가
+  const prevPos = useRef<{ x: number; y: number; courtX: number; courtY: number; time: number; speed: number } | null>(null);
   const speedBuffer = useRef<number[]>([]);
   const webviewRef = useRef<WebView>(null);
 
@@ -341,13 +373,6 @@ export default function AIAnalysis() {
       } else { setHasPermission(true); }
     };
     requestPermission();
-
-    // [개선] 앱 화면을 벗어나거나 언마운트 시 WebView 내부의 카메라 강제 정지 시그널 전달
-    return () => {
-      if (webviewRef.current) {
-         webviewRef.current.postMessage(JSON.stringify({ type: 'stopCamera' }));
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -551,8 +576,6 @@ export default function AIAnalysis() {
     setIsTimerRunning(false);
     setCountdown(null);
     if(mode === 'RHYTHM') webviewRef.current?.postMessage(JSON.stringify({ type: 'stopRhythm' }));
-    // [개선] 분석 모드 종료 시 카메라 자원 해제
-    webviewRef.current?.postMessage(JSON.stringify({ type: 'stopCamera' }));
 
     const newReport = createReport();
 
@@ -880,16 +903,6 @@ export default function AIAnalysis() {
       const parsed = JSON.parse(event.nativeEvent.data);
       if (parsed.type === 'log') return;
 
-      // [개선] 프레임 이탈 타임아웃 처리: 상태 고착 방지
-      if (parsed.type === 'POSE_TIMEOUT') {
-          if (isTimerRunning) {
-              isSwingingRef.current = false;
-              isLungingRef.current = false;
-              setCountdown(null);
-          }
-          return;
-      }
-
       if (parsed.type === 'rhythmHit') {
           if (parsed.timing === 'PERFECT' || parsed.timing === 'GREAT') {
               setRhythmCombo(prev => prev + 1);
@@ -922,22 +935,46 @@ export default function AIAnalysis() {
         if (mode === 'FOOTWORK' && footworkPoseRaw !== 'UNKNOWN') setCurrentFootworkPose(footworkPose);
 
         if (mode === 'SWING' || (mode === 'FOOTWORK' && difficulty === 'HARD')) {
-          if (!prevPos.current) { prevPos.current = { x: rawX, y: rawY, time: currentTime, speed: 0 }; return; }
-          const dx = rawX - prevPos.current.x; const dy = rawY - prevPos.current.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          const { courtX, courtY } = applyHomography(rawX, rawY);
+
+          if (!prevPos.current) {
+            prevPos.current = { x: rawX, y: rawY, courtX, courtY, time: currentTime, speed: 0 };
+            return;
+          }
+
+          // --------------------------------------------------------
+          // ✅ [수정됨] 좌표 분리 적용
+          // 1. 스윙 속도용 거리: 공중에 있는 손목이므로 원본(raw) 픽셀 좌표 사용
+          const swingDx = rawX - prevPos.current.x;
+          const swingDy = rawY - prevPos.current.y;
+          const swingDistance = Math.sqrt(swingDx * swingDx + swingDy * swingDy);
+
+          // 2. 풋워크 이동용 거리: 바닥에 있으므로 호모그래피 보정 좌표 사용
+          const courtDx = courtX - prevPos.current.courtX;
+          const courtDy = courtY - prevPos.current.courtY;
+          const courtDistance = Math.sqrt(courtDx * courtDx + courtDy * courtDy);
+          // --------------------------------------------------------
+
           let dynamicSmoothing = 0.7;
-          if (distance > 0.05) dynamicSmoothing = 0.1; else if (distance > 0.02) dynamicSmoothing = 0.4;
+          if (swingDistance > 0.05) dynamicSmoothing = 0.1; else if (swingDistance > 0.02) dynamicSmoothing = 0.4;
+
           const smoothX = prevPos.current.x * dynamicSmoothing + rawX * (1 - dynamicSmoothing);
           const smoothY = prevPos.current.y * dynamicSmoothing + rawY * (1 - dynamicSmoothing);
+          const smoothCourtX = prevPos.current.courtX * dynamicSmoothing + courtX * (1 - dynamicSmoothing);
+          const smoothCourtY = prevPos.current.courtY * dynamicSmoothing + courtY * (1 - dynamicSmoothing);
+
           let timeDiff = (currentTime - prevPos.current.time) / 1000;
           if (timeDiff < 0.03) timeDiff = 0.03;
 
           let currentSpeed = 0;
           if (timeDiff < 0.5) {
-            const pixelSpeed = distance / timeDiff;
+            // ✅ 스윙 속도 계산 시 뻥튀기된 courtDistance가 아닌 원본 swingDistance를 사용하여 속도 정상화
+            const pixelSpeed = swingDistance / timeDiff;
             currentSpeed = pixelSpeed * 40 * PIXEL_TO_REAL_SCALE;
             if (currentSpeed > 350) currentSpeed = 350;
           }
+
           speedBuffer.current.push(currentSpeed);
           if (speedBuffer.current.length > SPEED_BUFFER_SIZE) speedBuffer.current.shift();
           const avgSpeed = speedBuffer.current.reduce((a, b) => a + b, 0) / speedBuffer.current.length;
@@ -959,7 +996,8 @@ export default function AIAnalysis() {
                   tempMaxSpeedRef.current = avgSpeed; angleAtMaxRef.current = elbowAngle;
                   knnAtMaxRef.current = swingKnnScore; xFactorAtMaxRef.current = xFactor;
                 }
-                swingDistanceRef.current += distance;
+                // ✅ 누적 스윙 거리 계산에도 swingDistance 적용
+                swingDistanceRef.current += swingDistance;
               } else {
                 if (isSwingingRef.current) {
                   isSwingingRef.current = false;
@@ -983,7 +1021,7 @@ export default function AIAnalysis() {
                 }
               }
           }
-          prevPos.current = { x: smoothX, y: smoothY, time: currentTime, speed: currentSpeed };
+          prevPos.current = { x: smoothX, y: smoothY, courtX: smoothCourtX, courtY: smoothCourtY, time: currentTime, speed: currentSpeed };
         }
 
         if (mode === 'LUNGE') {
@@ -1787,4 +1825,13 @@ const styles = StyleSheet.create({
   trainingText: { color: '#D1D5DB', fontSize: 15, lineHeight: 22 },
   closeReportButton: { backgroundColor: '#3B82F6', paddingVertical: 16, borderRadius: 16, alignItems: 'center', marginTop: 10, marginBottom: 20 },
   closeReportText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+
+  guideCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  guideCardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  guideIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  guideCardTitle: { color: 'white', fontSize: 16, fontWeight: 'bold' },
+  guideDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.1)', marginBottom: 12 },
+  guideDescRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 6 },
+  bulletPoint: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#9CA3AF', marginTop: 8, marginRight: 8 },
+  guideDescText: { color: '#D1D5DB', fontSize: 14, lineHeight: 20, flex: 1 },
 });

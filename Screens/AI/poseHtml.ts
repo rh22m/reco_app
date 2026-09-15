@@ -21,8 +21,7 @@ export const htmlContent = `
   <script>
     // ---------------- [설정값] ----------------
     var frameCounter = 0;
-    // [최적화] RN 브릿지 병목 방지를 위해 전송 프레임 조율 (기존 1 -> 2로 변경하여 트래픽 절반 감소, 속도 계산에는 영향 없음)
-    var THROTTLE_RATE = 2;
+    var THROTTLE_RATE = 1; // 성능 최적화: 스윙 인식을 위해 매 프레임 전송
     var currentMode = 'SWING';
 
     // 전면 카메라(셀카 모드) 기본 설정 적용
@@ -34,8 +33,30 @@ export const htmlContent = `
     var currentBeatmap = [];
     var hitEffects = [];
 
-    // [예외 처리] 프레임 아웃 타임아웃 감지용 변수
-    var poseLostFrames = 0;
+    // [고도화 추가] 지수 이동 평균(EMA) 필터 클래스 및 인스턴스 배열
+    // 관절의 미세한 떨림(Jittering)을 보정하여 화면 렌더링 및 분석 데이터의 안정성을 높입니다.
+    class PointEMAFilter {
+      constructor(alpha = 0.2) {
+        this.alpha = alpha;
+        this.smoothedPoint = null;
+      }
+      filter(currentPoint) {
+        if (!currentPoint) return currentPoint;
+        if (!this.smoothedPoint) {
+          this.smoothedPoint = { ...currentPoint };
+          return this.smoothedPoint;
+        }
+        this.smoothedPoint.x = this.alpha * currentPoint.x + (1 - this.alpha) * this.smoothedPoint.x;
+        this.smoothedPoint.y = this.alpha * currentPoint.y + (1 - this.alpha) * this.smoothedPoint.y;
+        if (currentPoint.z !== undefined) {
+          this.smoothedPoint.z = this.alpha * currentPoint.z + (1 - this.alpha) * this.smoothedPoint.z;
+        }
+        this.smoothedPoint.visibility = currentPoint.visibility;
+        return { ...this.smoothedPoint };
+      }
+    }
+    // MediaPipe Pose는 총 33개의 랜드마크를 반환하므로 33개의 필터 생성
+    const emaFilters = Array.from({ length: 33 }, () => new PointEMAFilter(0.2));
 
     // 에러 핸들링: RN으로 로그 전송
     window.onerror = function(message, source, lineno, colno, error) {
@@ -82,7 +103,6 @@ export const htmlContent = `
             });
         }
 
-        // [개선] 3D 벡터 스케일링을 통한 유사도 산출 보정 (원근 왜곡 완화)
         function calculateSimilarity(userLandmarks, proLandmarks, mode) {
             const normUser = normalizePose(userLandmarks);
             const normPro = normalizePose(proLandmarks);
@@ -99,8 +119,7 @@ export const htmlContent = `
                 if(normUser[i] && normUser[i].visibility > 0.5 && normPro[i]) {
                     const u = normUser[i];
                     const p = normPro[i];
-                    // z축까지 합산하여 입체적 거리 계산
-                    const dist = Math.sqrt(Math.pow(u.x - p.x, 2) + Math.pow(u.y - p.y, 2) + Math.pow(u.z - p.z, 2));
+                    const dist = Math.sqrt(Math.pow(u.x - p.x, 2) + Math.pow(u.y - p.y, 2));
                     totalDistance += dist;
                 }
             }
@@ -109,20 +128,13 @@ export const htmlContent = `
             return score;
         }
 
-        // [개선] 2D 편향을 3D 벡터 내적(Dot Product)으로 완벽하게 전환하여 Z축 깊이 왜곡 방지
+        // 세 점 사이의 각도 계산 함수
         function calculateAngle(a, b, c) {
             if (!a || !b || !c) return 0;
-
-            const ab = { x: a.x - b.x, y: a.y - b.y, z: (a.z || 0) - (b.z || 0) };
-            const cb = { x: c.x - b.x, y: c.y - b.y, z: (c.z || 0) - (b.z || 0) };
-
-            const dot = (ab.x * cb.x) + (ab.y * cb.y) + (ab.z * cb.z);
-            const magAB = Math.sqrt((ab.x * ab.x) + (ab.y * ab.y) + (ab.z * ab.z));
-            const magCB = Math.sqrt((cb.x * cb.x) + (cb.y * cb.y) + (cb.z * cb.z));
-
-            if (magAB * magCB === 0) return 0;
-            const angle = Math.acos(Math.max(-1, Math.min(1, dot / (magAB * magCB))));
-            return angle * (180.0 / Math.PI);
+            const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+            let angle = Math.abs(radians * 180.0 / Math.PI);
+            if (angle > 180.0) angle = 360 - angle;
+            return angle;
         }
 
         // 풋워크 방향 판별 함수
@@ -183,17 +195,6 @@ export const htmlContent = `
           try {
             const data = JSON.parse(event.data);
             if (data.type === 'switchCamera') toggleCamera();
-
-            // [최적화] 메모리 누수 및 기기 발열 방지용 카메라 강제 종료 핸들러
-            if (data.type === 'stopCamera') {
-                isPlayingRhythm = false;
-                if (videoElement && videoElement.srcObject) {
-                    videoElement.srcObject.getTracks().forEach(track => track.stop());
-                }
-                if (pose) pose.close();
-                return;
-            }
-
             if (data.type === 'setMode') {
                 currentMode = data.mode;
                 isPlayingRhythm = false;
@@ -241,8 +242,16 @@ export const htmlContent = `
           canvasCtx.drawImage(results.image, offsetX, offsetY, drawWidth, drawHeight);
 
           if (results.poseLandmarks) {
-            // 인식 성공 시 타임아웃 초기화
-            poseLostFrames = 0;
+
+            // =========================================================
+            // ✅ [고도화 추가] 스켈레톤 렌더링 및 데이터 전송 전 EMA 필터 적용
+            // 모드별로 평활화 강도 조절 (반응성 우선: 0.5, 안정성 우선: 0.2)
+            // =========================================================
+            const filterAlpha = (currentMode === 'SWING' || currentMode === 'RHYTHM') ? 0.5 : 0.2;
+            for (let i = 0; i < results.poseLandmarks.length; i++) {
+                emaFilters[i].alpha = filterAlpha;
+                results.poseLandmarks[i] = emaFilters[i].filter(results.poseLandmarks[i]);
+            }
 
             if(window.drawConnectors && window.drawLandmarks) {
                 drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {color: '#00FFFF', lineWidth: 3});
@@ -382,7 +391,6 @@ export const htmlContent = `
                     let x = rWrist ? rWrist.x : 0;
                     if (!isBackCamera) x = 1.0 - x;
 
-                    // 페이로드 크기는 최소화된 상태이므로, 타이밍 계산에 필요한 핵심 데이터만 안정적으로 전송
                     window.ReactNativeWebView.postMessage(JSON.stringify({
                        type: 'poseData',
                        x: x,
@@ -399,16 +407,6 @@ export const htmlContent = `
                        headTilt: headTilt.toFixed(1)
                     }));
                 }
-            }
-          } else {
-            // [예외 처리] 프레임에서 선수가 사라진 경우 State Machine 꼬임 방지를 위한 타임아웃 감지
-            poseLostFrames++;
-            if (poseLostFrames === 1 && window.ReactNativeWebView) {
-                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'POSE_LOST' }));
-            }
-            if (poseLostFrames > 60 && window.ReactNativeWebView) { // 약 2초간 인식 불가 시 초기화 시그널 전송
-                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'POSE_TIMEOUT' }));
-                poseLostFrames = 0;
             }
           }
           canvasCtx.restore();

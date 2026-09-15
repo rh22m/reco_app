@@ -45,8 +45,7 @@ export type AiFootworkEvaluation = {
   recommendedDrill: string;
 };
 
-// [개선] 외부에서 Firebase Remote Config를 통해 덮어씌울 수 있도록 기본(Default) 값으로 활용
-export const DEFAULT_PRO_REFERENCE = {
+const PRO_REFERENCE = {
   readyKneeAngle: { min: 105, max: 145 },
   lungeKneeAngle: { min: 80, max: 125 },
   trunkLean: { min: 8, max: 26 },
@@ -60,29 +59,26 @@ function avg(values: number[]) {
   return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
 }
 
-// [개선] 2D 평면 투영 각도를 3D 벡터 내적(Dot Product) 연산으로 교체하여 Z축 깊이 왜곡 방지
 function angle(a?: PoseLandmark, b?: PoseLandmark, c?: PoseLandmark) {
   if (!a || !b || !c) return undefined;
 
-  const ab = { x: a.x - b.x, y: a.y - b.y, z: (a.z || 0) - (b.z || 0) };
-  const cb = { x: c.x - b.x, y: c.y - b.y, z: (c.z || 0) - (b.z || 0) };
-  const dot = ab.x * cb.x + ab.y * cb.y + ab.z * cb.z;
-  const magAB = Math.sqrt(ab.x * ab.x + ab.y * ab.y + ab.z * ab.z);
-  const magCB = Math.sqrt(cb.x * cb.x + cb.y * cb.y + cb.z * cb.z);
+  const ab = { x: a.x - b.x, y: a.y - b.y };
+  const cb = { x: c.x - b.x, y: c.y - b.y };
+  const dot = ab.x * cb.x + ab.y * cb.y;
+  const abLen = Math.sqrt(ab.x * ab.x + ab.y * ab.y);
+  const cbLen = Math.sqrt(cb.x * cb.x + cb.y * cb.y);
 
-  if (magAB * magCB === 0) return undefined;
+  if (!abLen || !cbLen) return undefined;
 
-  const cos = Math.max(-1, Math.min(1, dot / (magAB * magCB)));
+  const cos = Math.max(-1, Math.min(1, dot / (abLen * cbLen)));
   return (Math.acos(cos) * 180) / Math.PI;
 }
 
-// [개선] Z축 깊이를 포함한 3D 유클리디안 거리 연산으로 교체
 function distance(a?: PoseLandmark, b?: PoseLandmark) {
   if (!a || !b) return undefined;
   const dx = a.x - b.x;
   const dy = a.y - b.y;
-  const dz = (a.z || 0) - (b.z || 0);
-  return Math.sqrt(dx * dx + dy * dy + dz * dz);
+  return Math.sqrt(dx * dx + dy * dy);
 }
 
 function midpoint(a?: PoseLandmark, b?: PoseLandmark): PoseLandmark | undefined {
@@ -121,8 +117,79 @@ function playerVisibilityScore(snapshot: PoseSnapshot) {
   return clamp((visible / required.length) * 100);
 }
 
-// [개선] 동적 레퍼런스를 인자로 받아 평가
-function estimatePostureScore(snapshots: PoseSnapshot[], proRef: any) {
+// ============================================================================
+// ✅ [고도화 추가] 스윙/랠리 모드: 신뢰도(Visibility) 기반 이상치 제거 및 선형 보간
+// 고속 스윙 시 모션 블러로 인해 좌표가 튀는 현상을 막고 빈 프레임을 자연스럽게 채웁니다.
+// ============================================================================
+function applyConfidenceFilter(snapshots: PoseSnapshot[], threshold = 0.5): PoseSnapshot[] {
+  if (!snapshots.length) return snapshots;
+
+  // 원본 데이터를 훼손하지 않기 위해 깊은 복사 수행
+  const filtered = snapshots.map(s => ({
+    ...s,
+    landmarks: { ...s.landmarks }
+  }));
+
+  // 전체 스냅샷에 존재하는 모든 랜드마크 키 수집
+  const allKeys = new Set<string>();
+  filtered.forEach(s => Object.keys(s.landmarks).forEach(k => allKeys.add(k)));
+
+  for (const key of allKeys) {
+    let lastValidIdx = -1;
+
+    for (let i = 0; i < filtered.length; i++) {
+      const lm = filtered[i].landmarks[key];
+      const isVisible = lm && (lm.visibility ?? 1) >= threshold;
+
+      if (isVisible) {
+        lastValidIdx = i;
+      } else {
+        // 현재 프레임의 신뢰도가 낮을 경우, 미래의 유효한 프레임(nextValidIdx) 탐색
+        let nextValidIdx = -1;
+        for (let j = i + 1; j < filtered.length; j++) {
+          const nextLm = filtered[j].landmarks[key];
+          if (nextLm && (nextLm.visibility ?? 1) >= threshold) {
+            nextValidIdx = j;
+            break;
+          }
+        }
+
+        if (lastValidIdx !== -1 && nextValidIdx !== -1) {
+          // 과거와 미래의 유효한 값이 모두 존재하면 Timestamp 기반 선형 보간(Linear Interpolation) 수행
+          const prev = filtered[lastValidIdx];
+          const next = filtered[nextValidIdx];
+          const prevLm = prev.landmarks[key]!;
+          const nextLm = next.landmarks[key]!;
+
+          const t0 = prev.ts;
+          const t1 = next.ts;
+          const t = filtered[i].ts;
+          const ratio = t1 === t0 ? 0 : (t - t0) / (t1 - t0);
+
+          filtered[i].landmarks[key] = {
+            x: prevLm.x + (nextLm.x - prevLm.x) * ratio,
+            y: prevLm.y + (nextLm.y - prevLm.y) * ratio,
+            z: (prevLm.z !== undefined && nextLm.z !== undefined)
+              ? prevLm.z + (nextLm.z - prevLm.z) * ratio
+              : undefined,
+            visibility: lm?.visibility // 보간된 값이므로 원본의 낮은 visibility 유지 (후속 연산 참고용)
+          };
+        } else if (lastValidIdx !== -1) {
+          // 미래 값이 없으면 과거의 유효한 좌표로 고정 (Fallback)
+          filtered[i].landmarks[key] = { ...filtered[lastValidIdx].landmarks[key]!, visibility: lm?.visibility };
+        } else if (nextValidIdx !== -1) {
+          // 과거 값이 없으면 미래의 유효한 좌표로 당겨옴
+          filtered[i].landmarks[key] = { ...filtered[nextValidIdx].landmarks[key]!, visibility: lm?.visibility };
+        }
+      }
+    }
+  }
+
+  return filtered;
+}
+// ============================================================================
+
+function estimatePostureScore(snapshots: PoseSnapshot[]) {
   const kneeScores: number[] = [];
   const trunkScores: number[] = [];
   const balanceScores: number[] = [];
@@ -151,11 +218,11 @@ function estimatePostureScore(snapshots: PoseSnapshot[], proRef: any) {
 
     kneeScores.push(
       Math.max(
-        rangeScore(kneeMin, proRef.readyKneeAngle.min, proRef.readyKneeAngle.max),
-        rangeScore(kneeMin, proRef.lungeKneeAngle.min, proRef.lungeKneeAngle.max),
+        rangeScore(kneeMin, PRO_REFERENCE.readyKneeAngle.min, PRO_REFERENCE.readyKneeAngle.max),
+        rangeScore(kneeMin, PRO_REFERENCE.lungeKneeAngle.min, PRO_REFERENCE.lungeKneeAngle.max),
       ),
     );
-    trunkScores.push(rangeScore(trunkLean, proRef.trunkLean.min, proRef.trunkLean.max));
+    trunkScores.push(rangeScore(trunkLean, PRO_REFERENCE.trunkLean.min, PRO_REFERENCE.trunkLean.max));
     balanceScores.push(balanceScore);
     visibilityScores.push(playerVisibilityScore(snapshot));
   }
@@ -178,19 +245,19 @@ function fallbackPostureScore(events: any[]) {
   return Math.round(clamp(balanceAvg || 70));
 }
 
-// [개선] proReference 선택적 인자 추가 (추후 Firebase Remote Config 대응)
 export function evaluateBadmintonAiSet(params: {
   snapshots?: PoseSnapshot[];
   events?: any[];
   courtConfidence?: number;
-  proReference?: any;
 }): AiFootworkEvaluation {
-  const snapshots = params.snapshots ?? [];
+  // ✅ 파이프라인 진입 직전, 신뢰도 기반 필터링(보간)을 우선 적용하여 노이즈 제거
+  const rawSnapshots = params.snapshots ?? [];
+  const snapshots = applyConfidenceFilter(rawSnapshots, 0.5);
+
   const events = params.events ?? [];
   const courtConfidence = params.courtConfidence ?? 0.76;
-  const currentProReference = params.proReference || DEFAULT_PRO_REFERENCE;
 
-  const posture = estimatePostureScore(snapshots, currentProReference);
+  const posture = estimatePostureScore(snapshots);
   const court = analyzeCourtPosition(snapshots, courtConfidence);
   const footwork = analyzeFootwork(snapshots, events, courtConfidence);
   const swing = analyzeSwing(snapshots, footwork);

@@ -1,3 +1,5 @@
+// Screens/AI/realtimeFootworkEngine.ts
+
 export type CourtZone = 'CENTER' | 'FRONT_LEFT' | 'FRONT_RIGHT' | 'MID_LEFT' | 'MID_RIGHT' | 'BACK_LEFT' | 'BACK_RIGHT';
 
 export interface StepEvent {
@@ -38,6 +40,50 @@ export interface FootworkSetSummary {
   recommendedDrill: string;
 }
 
+// ============================================================================
+// ✅ [고도화 추가] 풋워크 게임 & 경기 실시간 분석: 코트 원근감 보정 (호모그래피)
+// 카메라 원근감으로 인한 2D 픽셀 왜곡을 3x3 변환 행렬을 통해 실제 코트(Top-Down) 좌표로 변환합니다.
+// ============================================================================
+
+/**
+ * 2D 픽셀 좌표를 Top-Down 코트 좌표로 변환하는 호모그래피 함수
+ * 카메라 위치에 따라 사전에 계산된 3x3 투영 변환 행렬(H)이 필요합니다.
+ */
+export function applyHomography(
+  cameraX: number,
+  cameraY: number,
+  H: number[][]
+): { courtX: number; courtY: number } {
+  // 행렬 내적 연산: w = H31*x + H32*y + H33
+  const w = H[2][0] * cameraX + H[2][1] * cameraY + H[2][2];
+
+  // 0으로 나누는 오류(Zero Division) 방지
+  if (w === 0) return { courtX: cameraX, courtY: cameraY };
+
+  // X' = (H11*x + H12*y + H13) / w
+  const courtX = (H[0][0] * cameraX + H[0][1] * cameraY + H[0][2]) / w;
+
+  // Y' = (H21*x + H22*y + H23) / w
+  const courtY = (H[1][0] * cameraX + H[1][1] * cameraY + H[1][2]) / w;
+
+  return { courtX, courtY };
+}
+
+/**
+ * 보정된 코트 좌표계를 기반으로 실제 풋워크 스텝 이동 거리를 산출합니다.
+ */
+export function calculateTrueDistance(
+  pos1: { courtX: number; courtY: number },
+  pos2: { courtX: number; courtY: number }
+): number {
+  const dx = pos2.courtX - pos1.courtX;
+  const dy = pos2.courtY - pos1.courtY;
+  // 유클리드 거리 산출
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+// ============================================================================
+
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v));
 function average(nums: number[]) { return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0; }
 function scoreReaction(ms: number) { if (ms <= 450) return 100; if (ms >= 1200) return 20; return clamp(100 - ((ms - 450) / 750) * 80); }
@@ -49,9 +95,8 @@ export function summarizeFootworkSet(input: FootworkSetInput): FootworkSetSummar
   const durationSec = Math.max(1, Math.round((input.endedAt - input.startedAt) / 1000));
   const eventCount = input.events.length;
 
-  // [예외 처리] 4000ms 이상의 반응/복귀는 카메라 이탈(Timeout) 등 비정상 동작이므로 필터링
-  const reactionList = input.events.map(e => e.reactionMs).filter((v): v is number => typeof v === 'number' && v < 4000);
-  const recoveryList = input.events.map(e => e.recoveryToCenterMs).filter((v): v is number => typeof v === 'number' && v < 4000);
+  const reactionList = input.events.map(e => e.reactionMs).filter((v): v is number => typeof v === 'number');
+  const recoveryList = input.events.map(e => e.recoveryToCenterMs).filter((v): v is number => typeof v === 'number');
   const balanceList = input.events.map(e => e.balanceScore).filter((v): v is number => typeof v === 'number');
   const kneeList = input.events.map(e => e.kneeAngleMin).filter((v): v is number => typeof v === 'number');
   const trunkList = input.events.map(e => e.trunkLeanDeg).filter((v): v is number => typeof v === 'number');
@@ -74,6 +119,7 @@ export function summarizeFootworkSet(input: FootworkSetInput): FootworkSetSummar
   const trunkScore = trunkList.length > 0 ? average(trunkList.map(scoreTrunkLean)) : 75;
 
   const postureScore = Math.round(kneeDepthScore * 0.4 + trunkScore * 0.3 + balanceScore * 0.3);
+  // ✅ 반코트 버전의 정교한 점수 계산법 통합
   const footworkScore = Math.round(recoveryScore * 0.35 + courtCoveragePct * 0.3 + reactionScore * 0.2 + splitScore * 0.15);
   const totalScore = Math.round(postureScore * 0.4 + footworkScore * 0.6);
 
